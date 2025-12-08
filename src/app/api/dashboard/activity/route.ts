@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 
 export async function GET() {
+  // Simulate network latency
+  await new Promise(resolve => setTimeout(resolve, 500));
+  
   const scanActivity = {
     scanActivityStats: [
       { label: 'Scanned assets', current: 3, total: 5 },
@@ -11,3 +14,5 @@ export async function GET() {
 
   return NextResponse.json(scanActivity);
 }
+
+    

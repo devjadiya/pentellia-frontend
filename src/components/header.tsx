@@ -30,7 +30,9 @@ export function Header() {
                 </Button>
             </SheetTrigger>
             <SheetContent side="left" className="w-[260px] p-0">
-                <AppSidebar />
+                 <div className="flex h-full flex-col">
+                    <AppSidebar />
+                </div>
             </SheetContent>
         </Sheet>
       </div>
@@ -81,3 +83,5 @@ export function Header() {
     </header>
   );
 }
+
+    
