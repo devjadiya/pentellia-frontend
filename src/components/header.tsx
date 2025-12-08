@@ -25,7 +25,7 @@ export function Header() {
     <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-white/5 bg-background/50 backdrop-blur-sm px-4 md:px-6">
       <div className="lg:hidden">
         <Sheet>
-            <SheetTrigger className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}>
+            <SheetTrigger asChild>
                 <SidebarTrigger />
             </SheetTrigger>
             <SheetContent side="left" className="w-[260px] p-0">
