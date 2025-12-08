@@ -28,7 +28,7 @@ export function Header() {
                 <SidebarTrigger />
             </SheetTrigger>
             <SheetContent side="left" className="w-[260px] p-0">
-                 <div className="flex h-full flex-col">
+                 <div className="flex h-full flex-col bg-sidebar text-sidebar-foreground">
                     <AppSidebar />
                 </div>
             </SheetContent>

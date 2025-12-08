@@ -143,7 +143,7 @@ export default function DashboardPage() {
   }
 
   const getBarHeight = (value: number, max: number) => {
-    return `${Math.min(100, (value / max) * 100)}%`;
+    return `${Math.max(10, (value / max) * 100)}%`;
   };
 
   const vulnSummary = summaryData?.vulnerabilitySummary;
@@ -250,7 +250,7 @@ export default function DashboardPage() {
                   />
                   <div
                     style={{ height: getBarHeight(vulnSummary?.low || 0, maxVuln) }}
-                    className="w-8 rounded-t-sm bg-cyan-500/70"
+                    className="w-8 rounded-t-sm bg-accent/70"
                   />
                 </div>
                 <div className="mt-4 flex flex-wrap justify-center gap-4 text-xs">
@@ -267,7 +267,7 @@ export default function DashboardPage() {
                     <span>Medium</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <span className="h-2 w-2 rounded-full bg-cyan-500"></span>
+                    <span className="h-2 w-2 rounded-full bg-accent"></span>
                     <span>Low</span>
                   </div>
                 </div>
