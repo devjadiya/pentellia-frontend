@@ -18,7 +18,6 @@ import {
   ChevronsUpDown,
   LifeBuoy,
   Plus,
-  Rocket,
 } from "lucide-react";
 import {
   SidebarHeader,
@@ -64,7 +63,7 @@ export function AppSidebar() {
     <>
       <SidebarHeader>
         <div className="flex items-center gap-2">
-          <Rocket className="w-6 h-6 text-primary" />
+          
           <h1 className="text-xl font-semibold text-foreground group-data-[collapsible=icon]:hidden">Pentellia</h1>
         </div>
       </SidebarHeader>
@@ -101,7 +100,7 @@ export function AppSidebar() {
         <SidebarMenu>
           {navItems.map((item) => (
             <SidebarMenuItem key={item.href}>
-              <Link href={item.href} legacyBehavior passHref>
+              <Link href={item.href}>
                 <SidebarMenuButton
                   isActive={pathname.startsWith(item.href)}
                   tooltip={item.label}
@@ -117,7 +116,7 @@ export function AppSidebar() {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <Link href="/support" legacyBehavior passHref>
+            <Link href="/support">
               <SidebarMenuButton tooltip="Support">
                 <LifeBuoy />
                 <span>Support</span>
