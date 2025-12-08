@@ -66,7 +66,7 @@ export function AppSidebar() {
       <SidebarHeader>
         <div className="flex items-center gap-2">
           <Rocket className="w-6 h-6 text-primary" />
-          <h1 className="text-xl font-semibold text-foreground">Pentellia</h1>
+          <h1 className="text-xl font-semibold text-foreground group-data-[collapsible=icon]:hidden">Pentellia</h1>
         </div>
       </SidebarHeader>
       <SidebarContent className="p-2">
@@ -77,13 +77,13 @@ export function AppSidebar() {
                 variant="outline"
                 className="w-full justify-between bg-sidebar-accent"
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 group-data-[collapsible=icon]:justify-center">
                   <Avatar className="w-6 h-6">
                     <AvatarFallback>WS</AvatarFallback>
                   </Avatar>
-                  <span className="truncate">My Workspace</span>
+                  <span className="truncate group-data-[collapsible=icon]:hidden">My Workspace</span>
                 </div>
-                <ChevronsUpDown className="h-4 w-4 text-muted-foreground" />
+                <ChevronsUpDown className="h-4 w-4 text-muted-foreground group-data-[collapsible=icon]:hidden" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="start">
@@ -104,7 +104,7 @@ export function AppSidebar() {
             <SidebarMenuItem key={item.href}>
               <Link href={item.href} legacyBehavior passHref>
                 <SidebarMenuButton
-                  isActive={pathname === item.href}
+                  isActive={pathname.startsWith(item.href)}
                   tooltip={item.label}
                 >
                   <item.icon />

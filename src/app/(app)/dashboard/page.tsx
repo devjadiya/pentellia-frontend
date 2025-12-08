@@ -2,7 +2,6 @@
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -63,7 +62,7 @@ export default function DashboardPage() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="shadow-[0_12px_40px_rgba(0,0,0,0.6)]">
+            <Card className="shadow-[0_12px_40px_rgba(0,0,0,0.6)] border-white/5">
               <CardHeader>
                 <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
                   Vulnerability Summary

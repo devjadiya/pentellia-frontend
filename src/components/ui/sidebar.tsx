@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -217,6 +218,8 @@ const Sidebar = React.forwardRef<
         ref={ref}
         className={cn(
             "group peer fixed inset-y-0 z-10 h-svh w-[--sidebar-width] flex-col bg-sidebar text-sidebar-foreground",
+            "data-[state=collapsed]:w-[--sidebar-width-icon]",
+            "transition-[width] duration-300 ease-in-out",
             className
         )}
         data-state={state}
@@ -346,7 +349,7 @@ const SidebarFooter = React.forwardRef<
     <div
       ref={ref}
       data-sidebar="footer"
-      className={cn("flex flex-col gap-2 p-2", className)}
+      className={cn("mt-auto flex flex-col gap-2 p-2", className)}
       {...props}
     />
   )
