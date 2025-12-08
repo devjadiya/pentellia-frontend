@@ -1,29 +1,26 @@
 import { NextResponse } from 'next/server';
 
 export async function GET() {
-  // Simulate network latency
-  await new Promise(resolve => setTimeout(resolve, 500));
+  await new Promise(resolve => setTimeout(resolve, 300));
 
   const summaryData = {
-    attackSurfaceStats: [
-      { label: 'IP Addresses', value: '1,234' },
-      { label: 'Hostnames', value: '567' },
-      { label: 'Open Ports', value: '8,910' },
-      { label: 'Protocols', value: '12' },
-      { label: 'Services', value: '345' },
-      { label: 'Technologies', value: '67' },
-      { label: 'Exposed Assets', value: '89' },
-      { label: 'New This Week', value: '13' },
-    ],
+    attackSurface: {
+        ipaddresses: '5',
+        hostnames: '8',
+        openports: '24',
+        protocols: '3',
+        services: '12',
+        technologies: '18',
+        exposedassets: '2',
+        newthisweek: '4',
+    },
     vulnerabilitySummary: {
-      critical: 45,
-      high: 123,
-      medium: 345,
-      low: 567,
+      critical: 2,
+      high: 5,
+      medium: 12,
+      low: 18,
     },
   };
 
   return NextResponse.json(summaryData);
 }
-
-    

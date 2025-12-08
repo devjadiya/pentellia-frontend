@@ -2,15 +2,15 @@
 
 import { useEffect, useState } from "react";
 import {
-  AlertTriangle,
+  AlertCircle,
   FileText,
   Fingerprint,
   Globe,
   HardDrive,
-  HeartPulse,
-  Router,
+  Loader2,
+  Network,
+  Radio,
   Server,
-  ShieldCheck,
   Zap,
 } from "lucide-react";
 import {
@@ -23,7 +23,6 @@ import {
 } from "recharts";
 
 import { useToast } from "@/hooks/use-toast";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -38,8 +37,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Skeleton } from "@/components/ui/skeleton";
+import Link from "next/link";
 
 type AttackSurfaceStat = {
   label: string;
@@ -55,30 +55,44 @@ type VulnerabilitySummary = {
   low: number;
 };
 
-type ScanActivityStat = {
-  label: string;
-  current: number;
-  total: number;
+type ScanActivityData = {
+  scannedAssets: number;
+  runningScans: number;
+  waitingScans: number;
+  totalAssets: number;
 };
 
 type SummaryData = {
-  attackSurfaceStats: Omit<AttackSurfaceStat, "icon">[];
+  attackSurface: { [key: string]: string };
   vulnerabilitySummary: VulnerabilitySummary;
 };
 
 type ActivityData = {
-  scanActivityStats: ScanActivityStat[];
+  scanActivity: ScanActivityData;
 };
 
 const iconMap: { [key: string]: React.ElementType } = {
   "IP Addresses": Globe,
-  Hostnames: Router,
+  Hostnames: Server,
   "Open Ports": Zap,
-  Protocols: FileText,
-  Services: Server,
+  Protocols: Network,
+  Services: Radio,
   Technologies: HardDrive,
-  "Exposed Assets": AlertTriangle,
+  "Exposed Assets": AlertCircle,
+  "New This Week": Fingerprint,
 };
+
+const attackSurfaceOrder = [
+    "IP Addresses",
+    "Hostnames",
+    "Open Ports",
+    "Protocols",
+    "Services",
+    "Technologies",
+    "Exposed Assets",
+    "New This Week",
+];
+
 
 export default function DashboardPage() {
   const [summaryData, setSummaryData] = useState<SummaryData | null>(null);
@@ -88,6 +102,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
         const [summaryRes, activityRes] = await Promise.all([
           fetch("/api/dashboard/summary"),
@@ -107,117 +122,76 @@ export default function DashboardPage() {
         toast({
           variant: "destructive",
           title: "Error",
-          description: "Failed to load dashboard data. Please try again later.",
+          description: "Failed to load dashboard. Please refresh.",
         });
       } finally {
-        // Simulate network delay for skeleton loaders
-        setTimeout(() => setLoading(false), 1000);
+        setTimeout(() => setLoading(false), 500);
       }
     };
 
     fetchData();
   }, [toast]);
 
-  const attackSurfaceStats: AttackSurfaceStat[] =
-    summaryData?.attackSurfaceStats.map((stat) => ({
-      ...stat,
-      icon: iconMap[stat.label] || Fingerprint,
-      trend: "+2 from last week", // mock trend data
-    })) || [];
+  const attackSurfaceStats: AttackSurfaceStat[] = summaryData
+    ? attackSurfaceOrder
+        .map((label) => ({
+          label,
+          value: summaryData.attackSurface[label.toLowerCase().replace(/ /g, '')] || '0',
+          icon: iconMap[label] || Fingerprint,
+          trend: "+2 from last week", // mock trend data
+        }))
+    : [];
 
   const vulnerabilityChartData = summaryData
     ? [
         {
           name: "Critical",
           count: summaryData.vulnerabilitySummary.critical,
-          fill: "hsl(var(--chart-1))",
+          fill: "var(--color-critical)",
         },
         {
           name: "High",
           count: summaryData.vulnerabilitySummary.high,
-          fill: "hsl(var(--chart-2))",
+          fill: "var(--color-high)",
         },
         {
           name: "Medium",
           count: summaryData.vulnerabilitySummary.medium,
-          fill: "hsl(var(--chart-3))",
+          fill: "var(--color-medium)",
         },
         {
           name: "Low",
           count: summaryData.vulnerabilitySummary.low,
-          fill: "hsl(var(--chart-4))",
+          fill: "var(--color-low)",
         },
       ]
     : [];
 
+  if (loading) {
+    return (
+      <div className="flex h-[calc(100vh-10rem)] items-center justify-center">
+        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   return (
     <div className="flex-1 space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-2xl font-semibold lg:text-3xl">Dashboard</h1>
-        <Tabs defaultValue="overview" className="w-full sm:w-auto">
-          <TabsList>
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="whats-new">What's new</TabsTrigger>
-            <TabsTrigger value="help">Help</TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <h1 className="text-3xl font-semibold text-gray-900">Dashboard</h1>
       </div>
 
-      <Tabs defaultValue="overview">
-        <TabsContent value="overview" className="space-y-6">
-          <div className="grid gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
-            <Card className="flex flex-col">
-              <CardHeader>
-                <CardTitle className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
-                  Attack Surface Summary
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="flex-1">
-                {loading ? (
-                  <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-                    {Array.from({ length: 8 }).map((_, i) => (
-                      <Card key={i} className="min-h-[120px] p-4">
-                        <Skeleton className="mb-2 h-8 w-8 rounded-full" />
-                        <Skeleton className="mb-2 h-6 w-3/4" />
-                        <Skeleton className="h-4 w-1/2" />
-                      </Card>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-                    {attackSurfaceStats.map((stat) => (
-                      <Card key={stat.label} className="min-h-[120px]">
-                        <CardContent className="flex h-full flex-col justify-between p-4">
-                          <div className="flex items-start justify-between">
-                            <div className="text-3xl font-semibold">
-                              {stat.value}
-                            </div>
-                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
-                              <stat.icon className="h-4 w-4" />
-                            </div>
-                          </div>
-                          <div>
-                            <p className="text-sm text-muted-foreground">
-                              {stat.label}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              {stat.trend}
-                            </p>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-            <Card className="shadow-[0_12px_40px_rgba(0,0,0,0.6)] border-white/5 flex flex-col">
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
-                  Vulnerability Summary
-                </CardTitle>
-                <Select defaultValue="30">
-                  <SelectTrigger className="h-8 w-[140px] text-xs">
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gray-200 pb-6">
+          <Tabs defaultValue="overview" className="w-full sm:w-auto">
+            <TabsList>
+              <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="whats-new">What's new</TabsTrigger>
+              <TabsTrigger value="help">Help</TabsTrigger>
+            </TabsList>
+          </Tabs>
+          <div className="flex items-center gap-4">
+             <Select defaultValue="30">
+                  <SelectTrigger className="h-9 w-[150px] text-xs">
                     <SelectValue placeholder="Select period" />
                   </SelectTrigger>
                   <SelectContent>
@@ -226,93 +200,121 @@ export default function DashboardPage() {
                     <SelectItem value="30">Last 30 days</SelectItem>
                   </SelectContent>
                 </Select>
-              </CardHeader>
-              <CardContent className="flex-1 flex flex-col">
-                {loading ? (
-                  <div className="flex h-full flex-col justify-between">
-                     <Skeleton className="h-48 w-full rounded-md" />
-                     <div className="flex items-center justify-center gap-4 text-xs">
-                        <Skeleton className="h-4 w-16" />
-                        <Skeleton className="h-4 w-16" />
-                        <Skeleton className="h-4 w-16" />
-                        <Skeleton className="h-4 w-16" />
-                    </div>
-                  </div>
-                ) : (
-                  <>
-                  <div className="h-48 flex-1">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={vulnerabilityChartData} margin={{ top: 20, right: 0, left: -20, bottom: 0 }}>
-                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border) / 0.5)" />
-                            <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={10} tickLine={false} axisLine={false} />
-                            <YAxis stroke="hsl(var(--muted-foreground))" fontSize={10} tickLine={false} axisLine={false} />
-                            <Bar dataKey="count" radius={[4, 4, 0, 0]} />
-                        </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                  <div className="flex flex-wrap justify-center gap-4 text-xs mt-2">
-                    <div className="flex items-center gap-1.5">
-                      <span className="h-2 w-2 rounded-full bg-[hsl(var(--chart-1))]"></span>
-                      <span>Critical</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="h-2 w-2 rounded-full bg-[hsl(var(--chart-2))]"></span>
-                      <span>High</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="h-2 w-2 rounded-full bg-[hsl(var(--chart-3))]"></span>
-                      <span>Medium</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="h-2 w-2 rounded-full bg-[hsl(var(--chart-4))]"></span>
-                      <span>Low</span>
-                    </div>
-                  </div>
-                  </>
-                )}
-              </CardContent>
-            </Card>
+            <Link href="#" className="text-sm text-blue-600 hover:underline">
+                Workspace overview
+            </Link>
           </div>
-          <Card>
+      </div>
+
+      <TabsContent value="overview" className="mt-0 space-y-6">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+          <Card className="bg-white border-gray-200 shadow-md">
             <CardHeader>
-              <CardTitle className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
-                Scan Activity
+              <CardTitle className="text-lg font-semibold text-gray-900">
+                Attack Surface Summary
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {loading ? (
-                <div className="grid grid-cols-1 gap-4 text-center md:grid-cols-3">
-                  {Array.from({ length: 3 }).map((_, i) => (
-                     <div key={i} className="flex flex-col items-center gap-2">
-                        <Skeleton className="h-32 w-32 rounded-full" />
-                        <Skeleton className="mt-2 h-5 w-24" />
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 gap-4 text-center md:grid-cols-3">
-                  {activityData?.scanActivityStats.map((stat) => (
-                    <div
-                      key={stat.label}
-                      className="flex flex-col items-center gap-2"
-                    >
-                      <div className="relative flex h-32 w-32 flex-col items-center justify-center rounded-full border-4 border-white/10 bg-muted">
-                        <div className="text-4xl font-bold">{stat.current}</div>
-                        <div className="text-sm text-muted-foreground">
-                          / {stat.total}
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+                {attackSurfaceStats.map((stat) => (
+                  <Card key={stat.label} className="min-h-[140px] bg-white border-gray-200 p-4 flex flex-col justify-between rounded-lg">
+                      <div>
+                        <div className="text-cyan-600">
+                          <stat.icon className="h-6 w-6" />
                         </div>
                       </div>
-                      <p className="mt-2 font-medium">{stat.label}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
+                      <div>
+                        <div className="text-3xl font-bold text-blue-600">
+                          {stat.value}
+                        </div>
+                        <p className="text-xs uppercase text-gray-500">
+                          {stat.label}
+                        </p>
+                        <p className="text-xs text-gray-400">
+                          {stat.trend}
+                        </p>
+                      </div>
+                  </Card>
+                ))}
+              </div>
             </CardContent>
           </Card>
-        </TabsContent>
-      </Tabs>
+          
+          <Card className="bg-white border-gray-200 shadow-md">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-lg font-semibold text-gray-900">
+                Vulnerability summary
+              </CardTitle>
+              <Select defaultValue="30">
+                <SelectTrigger className="h-8 w-[140px] text-xs">
+                  <SelectValue placeholder="Select period" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="7">Last 7 days</SelectItem>
+                  <SelectItem value="14">Last 14 days</SelectItem>
+                  <SelectItem value="30">Last 30 days</SelectItem>
+                </SelectContent>
+              </Select>
+            </CardHeader>
+            <CardContent>
+                <div className="h-48 flex items-end justify-center gap-4">
+                     <div style={{height: `${Math.min(100, (summaryData?.vulnerabilitySummary.critical || 0) * 2)}%`, backgroundColor: 'var(--color-critical)'}} className="w-8 rounded-t-sm" />
+                     <div style={{height: `${Math.min(100, (summaryData?.vulnerabilitySummary.high || 0) * 2)}%`, backgroundColor: 'var(--color-high)'}} className="w-8 rounded-t-sm" />
+                     <div style={{height: `${Math.min(100, (summaryData?.vulnerabilitySummary.medium || 0) * 2)}%`, backgroundColor: 'var(--color-medium)'}} className="w-8 rounded-t-sm" />
+                     <div style={{height: `${Math.min(100, (summaryData?.vulnerabilitySummary.low || 0) * 2)}%`, backgroundColor: 'var(--color-low)'}} className="w-8 rounded-t-sm" />
+                </div>
+              <div className="flex flex-wrap justify-center gap-4 text-xs mt-4">
+                <div className="flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-full" style={{backgroundColor: 'var(--color-critical)'}}></span>
+                  <span>Critical</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-full" style={{backgroundColor: 'var(--color-high)'}}></span>
+                  <span>High</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-full" style={{backgroundColor: 'var(--color-medium)'}}></span>
+                  <span>Medium</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-full" style={{backgroundColor: 'var(--color-low)'}}></span>
+                  <span>Low</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        
+        <Card className="bg-white border-gray-200 shadow-md">
+          <CardHeader>
+            <CardTitle className="text-lg font-semibold text-gray-900">
+              Scan Activity
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col md:flex-row items-center justify-center gap-6">
+                <div className="flex flex-col items-center gap-2">
+                    <div className="relative flex h-32 w-32 flex-col items-center justify-center rounded-full border-4 border-blue-200 bg-white">
+                        <div className="text-2xl font-bold text-blue-600">{activityData?.scanActivity.scannedAssets}</div>
+                    </div>
+                    <p className="mt-2 text-sm text-gray-500">Scanned Assets</p>
+                </div>
+                <div className="flex flex-col items-center gap-2">
+                    <div className="relative flex h-32 w-32 flex-col items-center justify-center rounded-full border-4 border-blue-200 bg-white">
+                        <div className="text-2xl font-bold text-blue-600">{activityData?.scanActivity.runningScans}</div>
+                    </div>
+                    <p className="mt-2 text-sm text-gray-500">Running Scans</p>
+                </div>
+                <div className="flex flex-col items-center gap-2">
+                    <div className="relative flex h-32 w-32 flex-col items-center justify-center rounded-full border-4 border-blue-200 bg-white">
+                        <div className="text-2xl font-bold text-blue-600">{activityData?.scanActivity.waitingScans}</div>
+                    </div>
+                    <p className="mt-2 text-sm text-gray-500">Waiting Scans</p>
+                </div>
+            </div>
+          </CardContent>
+        </Card>
+      </TabsContent>
     </div>
   );
 }
-
-    

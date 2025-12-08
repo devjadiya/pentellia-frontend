@@ -1,18 +1,16 @@
 import { NextResponse } from 'next/server';
 
 export async function GET() {
-  // Simulate network latency
-  await new Promise(resolve => setTimeout(resolve, 500));
+  await new Promise(resolve => setTimeout(resolve, 300));
   
-  const scanActivity = {
-    scanActivityStats: [
-      { label: 'Scanned assets', current: 3, total: 5 },
-      { label: 'Running scans', current: 1, total: 2 },
-      { label: 'Waiting scans', current: 0, total: 1 },
-    ],
+  const activityData = {
+    scanActivity: {
+        scannedAssets: 45, 
+        runningScans: 3, 
+        waitingScans: 7, 
+        totalAssets: 100
+    },
   };
 
-  return NextResponse.json(scanActivity);
+  return NextResponse.json(activityData);
 }
-
-    
