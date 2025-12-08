@@ -44,33 +44,33 @@ body {
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
   .dark {
-    --background: 224 15% 15%;
+    --background: 222 83% 4%; /* #05070b */
     --foreground: 210 40% 98%;
-    --card: 224 15% 18%;
+    --card: 222 47% 11%; /* #101626 */
     --card-foreground: 210 40% 98%;
     --popover: 224 15% 11%;
     --popover-foreground: 210 40% 98%;
-    --primary: 217 96% 63%;
+    --primary: 217 96% 63%; /* #448BFB */
     --primary-foreground: 210 40% 98%;
     --secondary: 224 15% 25%;
     --secondary-foreground: 210 40% 98%;
-    --muted: 224 15% 25%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 222 47% 11%;
+    --muted-foreground: 215 20% 65%; /* #8a9bbf - a muted slate */
     --accent: 224 15% 20%;
     --accent-foreground: 210 40% 98%;
     --destructive: 0 63% 31%;
     --destructive-foreground: 210 40% 98%;
-    --border: 224 15% 25%;
+    --border: 217 19% 27%; /* A slightly lighter border */
     --input: 224 15% 25%;
     --ring: 217 96% 63%;
     --radius: 0.5rem;
-    --sidebar-background: 224 15% 11%;
+    --sidebar-background: 222 71% 8%; /* #0b0f1a */
     --sidebar-foreground: 215 20% 65%;
     --sidebar-primary: 217 96% 63%;
     --sidebar-primary-foreground: 210 40% 98%;
     --sidebar-accent: 224 15% 18%;
     --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 224 15% 20%;
+    --sidebar-border: 217 19% 18%; /* Darker border for sidebar internal elements */
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
