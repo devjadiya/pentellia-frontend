@@ -75,3 +75,14 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .header-bg {
+    @apply bg-card border-b;
+  }
+
+  .dark .header-bg {
+    background-color: #3a3f47;
+    border-bottom-color: #3a3f47;
+  }
+}

@@ -21,7 +21,7 @@ const userAvatar = PlaceHolderImages.find((img) => img.id === "user-avatar");
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-card px-4 md:px-6">
+    <header className={cn("sticky top-0 z-30 flex h-16 items-center gap-4 px-4 md:px-6", "header-bg")}>
       <div className="lg:hidden">
         <Sheet>
             <SheetTrigger asChild>
