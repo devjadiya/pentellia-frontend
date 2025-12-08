@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Bell, Rocket, User } from "lucide-react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,6 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { AppSidebar } from "@/components/app-sidebar";
+import { cn } from "@/lib/utils";
 
 const userAvatar = PlaceHolderImages.find((img) => img.id === "user-avatar");
 
@@ -25,9 +26,9 @@ export function Header() {
       <div className="lg:hidden">
         <Sheet>
             <SheetTrigger asChild>
-                <Button variant="ghost" size="icon">
+                <button className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}>
                     <SidebarTrigger />
-                </Button>
+                </button>
             </SheetTrigger>
             <SheetContent side="left" className="w-[260px] p-0">
                  <div className="flex h-full flex-col">
@@ -83,5 +84,3 @@ export function Header() {
     </header>
   );
 }
-
-    
