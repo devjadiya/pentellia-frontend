@@ -17,8 +17,7 @@ import { cn } from "@/lib/utils";
 export function Header() {
   return (
     <header className={cn("sticky top-0 z-40 flex h-16 items-center gap-4 border-b bg-[#242a34] px-4 md:px-6")}>
-      <div className="flex items-center gap-4">
-        <div className="lg:hidden">
+      <div className="flex items-center gap-4 lg:hidden">
           <Sheet>
             <SheetTrigger asChild>
               <SidebarTrigger />
@@ -29,11 +28,6 @@ export function Header() {
               </div>
             </SheetContent>
           </Sheet>
-        </div>
-        <div className="flex items-center gap-2">
-            <Rocket className="w-6 h-6 text-primary" />
-            <h1 className="text-xl font-semibold text-foreground">Pentellia</h1>
-        </div>
       </div>
 
       <div className="flex flex-1 items-center justify-end gap-4">

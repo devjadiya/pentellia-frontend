@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Rocket } from "lucide-react";
 
 export default function LoginPage() {
   async function signIn(formData: FormData) {
@@ -26,7 +25,6 @@ export default function LoginPage() {
     <Card>
       <CardHeader className="items-center text-center">
         <div className="flex items-center gap-2 mb-2">
-           <Rocket className="w-6 h-6 text-primary" />
            <h1 className="text-xl font-semibold text-foreground">Pentellia</h1>
         </div>
         <CardTitle>Login</CardTitle>
