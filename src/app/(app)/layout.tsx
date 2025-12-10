@@ -5,11 +5,11 @@ import { Header } from "@/components/header";
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="min-h-screen w-full bg-gray-50 text-gray-900">
+    <div className="min-h-screen w-full text-foreground">
       <Header />
       <div className="flex">
         <AppSidebar />
-        <main className="flex-1 p-4 md:p-6 lg:p-8">
+        <main className="flex-1 bg-[#F5F7FB] p-4 md:p-6 lg:p-8">
           {children}
         </main>
       </div>

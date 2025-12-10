@@ -18,15 +18,15 @@ export function Header() {
     const userAvatar = useMemo(() => PlaceHolderImages.find(img => img.id === 'user-avatar'), []);
 
   return (
-    <header className="sticky top-0 z-50 flex h-16 w-full items-center justify-between border-b border-gray-200 bg-white px-4 md:px-6">
-      <div className="flex items-center gap-x-4">
-        <Button variant="ghost" size="icon">
+    <header className="sticky top-0 z-50 flex h-16 items-center justify-between border-b border-gray-700 bg-[#111827] px-6 text-white">
+      <div className="flex items-center gap-4">
+        <Button variant="ghost" size="icon" className="text-white hover:bg-gray-700">
           <Menu className="h-6 w-6" />
           <span className="sr-only">Toggle menu</span>
         </Button>
         <div className="flex items-center gap-2">
-             <ShieldIcon className="h-6 w-6 text-gray-800" />
-             <span className="text-lg font-semibold text-gray-800">Pentest Tools</span>
+             <ShieldIcon className="h-6 w-6 text-white" />
+             <span className="text-lg font-semibold text-white">Pentest Tools</span>
         </div>
       </div>
 
@@ -39,7 +39,7 @@ export function Header() {
         
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="flex items-center gap-1 text-sm font-semibold text-gray-600">
+                <Button variant="ghost" className="flex items-center gap-1 text-sm font-semibold text-gray-300 hover:bg-gray-700 hover:text-white">
                     RESOURCES
                     <ChevronDown className="h-4 w-4" />
                 </Button>
@@ -62,7 +62,7 @@ export function Header() {
                   />
                   <AvatarFallback>U</AvatarFallback>
                 </Avatar>
-                <ChevronDown className="h-4 w-4 text-gray-600" />
+                <ChevronDown className="h-4 w-4 text-gray-400" />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56" align="end" forceMount>
