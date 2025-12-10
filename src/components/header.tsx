@@ -14,12 +14,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { AppSidebar } from "@/components/app-sidebar";
 import { cn } from "@/lib/utils";
+import { Rocket } from "lucide-react";
 
 export function Header() {
   return (
-    <header className={cn("sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b bg-[#242a34] px-4 sm:gap-x-6 sm:px-6 lg:px-8")}>
+    <header className={cn("sticky top-0 z-30 flex h-16 shrink-0 items-center gap-x-4 border-b bg-[#242a34] px-4 sm:gap-x-6 sm:px-6 lg:px-8")}>
       
-      {/* Mobile sidebar menu */}
+      {/* Mobile sidebar menu - uses a sheet */}
       <Sheet>
         <SheetTrigger asChild>
           <Button variant="ghost" size="icon" className="lg:hidden -ml-2">
@@ -38,7 +39,7 @@ export function Header() {
         <SidebarTrigger />
       </div>
 
-      {/* Separator */}
+      {/* Separator for mobile */}
       <div className="h-6 w-px bg-gray-200/20 lg:hidden" aria-hidden="true" />
 
 
