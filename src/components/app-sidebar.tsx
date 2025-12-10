@@ -1,7 +1,7 @@
+
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   Bot,
@@ -40,7 +40,6 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
-import { SidebarTrigger } from "./ui/sidebar";
 
 const navItems = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
@@ -64,12 +63,9 @@ export function AppSidebar() {
   return (
     <>
       <SidebarHeader>
-        <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-                <Rocket className="w-6 h-6 text-primary" />
-                <h1 className="text-xl font-semibold text-foreground group-data-[collapsible=icon]:hidden">Pentellia</h1>
-            </div>
-            <SidebarTrigger className="hidden lg:flex" />
+        <div className="flex items-center gap-2">
+            <Rocket className="w-6 h-6 text-primary" />
+            <h1 className="text-xl font-semibold text-foreground group-data-[collapsible=icon]:hidden">Pentellia</h1>
         </div>
       </SidebarHeader>
       <SidebarContent className="p-2">

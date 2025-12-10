@@ -1,4 +1,5 @@
-import { Bell, ChevronDown, LifeBuoy, LogOut, Rocket, Settings, User } from "lucide-react";
+
+import { ChevronDown, LifeBuoy, LogOut, Settings, User } from "lucide-react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,19 +17,30 @@ import { cn } from "@/lib/utils";
 
 export function Header() {
   return (
-    <header className={cn("sticky top-0 z-40 flex h-16 items-center gap-4 border-b bg-[#242a34] px-4 md:px-6")}>
-      <div className="flex items-center gap-4 lg:hidden">
-          <Sheet>
-            <SheetTrigger asChild>
-              <SidebarTrigger />
-            </SheetTrigger>
-            <SheetContent side="left" className="w-[260px] p-0">
-              <div className="flex h-full flex-col bg-sidebar text-sidebar-foreground">
-                <AppSidebar />
-              </div>
-            </SheetContent>
-          </Sheet>
+    <header className={cn("sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b bg-[#242a34] px-4 sm:gap-x-6 sm:px-6 lg:px-8")}>
+      
+      {/* Mobile sidebar menu */}
+      <Sheet>
+        <SheetTrigger asChild>
+          <Button variant="ghost" size="icon" className="lg:hidden">
+            <SidebarTrigger />
+          </Button>
+        </SheetTrigger>
+        <SheetContent side="left" className="w-[260px] p-0">
+          <div className="flex h-full flex-col bg-sidebar text-sidebar-foreground">
+            <AppSidebar />
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      {/* Desktop sidebar trigger */}
+      <div className="hidden lg:flex">
+        <SidebarTrigger />
       </div>
+
+      {/* Separator */}
+      <div className="h-6 w-px bg-gray-200/20 lg:hidden" aria-hidden="true" />
+
 
       <div className="flex flex-1 items-center justify-end gap-4">
         <Button variant="outline" size="sm" className="hidden sm:inline-flex">Unlock full features</Button>
