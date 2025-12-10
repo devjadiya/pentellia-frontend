@@ -1,69 +1,93 @@
 
-"use client";
+'use client';
 
-import { Menu, Star, ChevronDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Menu, Star, ChevronDown } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ShieldIcon } from "./icons";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
-import { useMemo } from "react";
+} from '@/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { ShieldIcon } from './icons';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { useMemo } from 'react';
+import { useLayout } from '@/context/layout-context';
 
 export function Header() {
-    const userAvatar = useMemo(() => PlaceHolderImages.find(img => img.id === 'user-avatar'), []);
+  const { toggleSidebar } = useLayout();
+  const userAvatar = useMemo(
+    () => PlaceHolderImages.find((img) => img.id === 'user-avatar'),
+    []
+  );
 
   return (
-    <header className="sticky top-0 z-50 flex h-16 items-center justify-between border-b border-gray-700 bg-[#111827] px-6 text-white">
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" className="text-white hover:bg-gray-700">
-          <Menu className="h-6 w-6" />
-          <span className="sr-only">Toggle menu</span>
+    <header className="fixed top-0 left-0 right-0 z-40 flex h-16 items-center justify-between border-b border-slate-800 bg-[#111827] px-4 text-white">
+      {/* Left side: menu + logo */}
+      <div className="flex items-center gap-3">
+        <Button
+          onClick={toggleSidebar}
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 text-white hover:bg-slate-800"
+          aria-label="Toggle sidebar"
+        >
+          <Menu className="h-5 w-5" />
         </Button>
+
         <div className="flex items-center gap-2">
-             <ShieldIcon className="h-6 w-6 text-white" />
-             <span className="text-lg font-semibold text-white">Pentest Tools</span>
+          <ShieldIcon className="h-6 w-6 text-white" />
+          <span className="text-lg font-semibold text-white">Pentest Tools</span>
         </div>
       </div>
 
-      <div className="flex items-center gap-x-4">
-        <Button variant="warning" className="hidden sm:inline-flex">
+      {/* Spacer */}
+      <div className="flex-1" />
+
+      {/* Right side: buttons + dropdowns */}
+      <div className="flex items-center gap-x-3 sm:gap-x-4">
+        <Button variant="warning" className="hidden sm:inline-flex text-sm">
           <Star className="mr-2 h-4 w-4" />
           Unlock full features
         </Button>
-        <Button variant="dark" className="hidden sm:inline-flex">Book a Demo</Button>
-        
+        <Button variant="dark" className="hidden sm:inline-flex text-sm">
+          Book a Demo
+        </Button>
+
         <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="flex items-center gap-1 text-sm font-semibold text-gray-300 hover:bg-gray-700 hover:text-white">
-                    RESOURCES
-                    <ChevronDown className="h-4 w-4" />
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-                <DropdownMenuItem>Blog</DropdownMenuItem>
-                <DropdownMenuItem>API Reference</DropdownMenuItem>
-                <DropdownMenuItem>Changelog</DropdownMenuItem>
-            </DropdownMenuContent>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              className="hidden sm:flex items-center gap-1 text-xs font-medium text-slate-100 hover:text-white"
+            >
+              RESOURCES
+              <ChevronDown className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem>Blog</DropdownMenuItem>
+            <DropdownMenuItem>API Reference</DropdownMenuItem>
+            <DropdownMenuItem>Changelog</DropdownMenuItem>
+          </DropdownMenuContent>
         </DropdownMenu>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="flex items-center gap-2">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage
-                    src={userAvatar?.imageUrl}
-                    alt={userAvatar?.description}
-                    data-ai-hint={userAvatar?.imageHint}
-                  />
-                  <AvatarFallback>U</AvatarFallback>
-                </Avatar>
-                <ChevronDown className="h-4 w-4 text-gray-400" />
-            </button>
+            <Button
+              variant="ghost"
+              className="flex items-center gap-2 p-1 h-auto rounded-full hover:bg-slate-800"
+            >
+              <Avatar className="h-8 w-8">
+                <AvatarImage
+                  src={userAvatar?.imageUrl}
+                  alt={userAvatar?.description}
+                  data-ai-hint={userAvatar?.imageHint}
+                />
+                <AvatarFallback>U</AvatarFallback>
+              </Avatar>
+              <ChevronDown className="h-4 w-4 text-slate-400" />
+            </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56" align="end" forceMount>
             <DropdownMenuItem>Profile</DropdownMenuItem>
