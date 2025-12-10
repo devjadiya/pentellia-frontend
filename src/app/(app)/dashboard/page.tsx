@@ -2,16 +2,12 @@
 "use client";
 
 import {
-  AlertCircle,
-  FileText,
-  Fingerprint,
   Globe,
-  HardDrive,
-  Loader2,
-  Network,
-  Radio,
   Server,
   Zap,
+  Network,
+  Radio,
+  HardDrive,
 } from "lucide-react";
 import {
   Card,
@@ -20,41 +16,19 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart"
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
 
 const attackSurfaceStats = [
-  { label: "IP ADDRESS", value: 1, icon: Globe },
-  { label: "HOSTNAME", value: 1, icon: Server },
-  { label: "PORT", value: 1, icon: Zap },
-  { label: "PROTOCOL", value: 1, icon: Network },
-  { label: "SERVICES", value: 0, icon: Radio },
-  { label: "TECHNOLOGIES", value: 9, icon: HardDrive },
+  { label: "IP ADDRESS", value: 1 },
+  { label: "HOSTNAME", value: 1 },
+  { label: "PORT", value: 1 },
+  { label: "PROTOCOL", value: 1 },
+  { label: "SERVICES", value: 0 },
+  { label: "TECHNOLOGIES", value: 9 },
 ];
-
-const chartData = [
-  { month: "January", desktop: 186 },
-  { month: "February", desktop: 305 },
-  { month: "March", desktop: 237 },
-  { month: "April", desktop: 73 },
-  { month: "May", desktop: 209 },
-  { month: "June", desktop: 214 },
-]
-
-const chartConfig = {
-  desktop: {
-    label: "Desktop",
-    color: "#06b6d4",
-  },
-}
 
 export default function DashboardPage() {
   return (
-    <div className="flex-1 space-y-6 p-4 md:p-6 lg:p-8">
+    <div className="flex-1 space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-gray-800">Dashboard</h1>
       </div>
@@ -95,7 +69,7 @@ export default function DashboardPage() {
                          <div className="relative h-32 w-32">
                              <svg className="h-full w-full" width="36" height="36" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
                                  <circle cx="18" cy="18" r="16" fill="none" className="stroke-current text-gray-200" strokeWidth="2"></circle>
-                                 <circle cx="18" cy="18" r="16" fill="none" className="stroke-current text-cyan-500" strokeWidth="2" strokeDasharray="100" strokeDashoffset="100"></circle>
+                                 <circle cx="18" cy="18" r="16" fill="none" className="stroke-current text-cyan-500" strokeWidth="2" strokeDasharray="100" strokeDashoffset="100" style={{strokeDashoffset: `calc(100 - (100 * 0) / 100)`}}></circle>
                              </svg>
                              <div className="absolute inset-0 flex items-center justify-center">
                                  <span className="text-2xl font-bold text-gray-800">0 / 5</span>
@@ -111,7 +85,7 @@ export default function DashboardPage() {
                          <div className="relative h-32 w-32">
                               <svg className="h-full w-full" width="36" height="36" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
                                  <circle cx="18" cy="18" r="16" fill="none" className="stroke-current text-gray-200" strokeWidth="2"></circle>
-                                 <circle cx="18" cy="18" r="16" fill="none" className="stroke-current text-cyan-500" strokeWidth="2" strokeDasharray="100" strokeDashoffset="100"></circle>
+                                 <circle cx="18" cy="18" r="16" fill="none" className="stroke-current text-cyan-500" strokeWidth="2" strokeDasharray="100" strokeDashoffset="100" style={{strokeDashoffset: `calc(100 - (100 * 0) / 100)`}}></circle>
                              </svg>
                              <div className="absolute inset-0 flex items-center justify-center">
                                  <span className="text-2xl font-bold text-gray-800">0 / 2</span>
@@ -127,7 +101,7 @@ export default function DashboardPage() {
                          <div className="relative h-32 w-32">
                              <svg className="h-full w-full" width="36" height="36" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
                                  <circle cx="18" cy="18" r="16" fill="none" className="stroke-current text-gray-200" strokeWidth="2"></circle>
-                                 <circle cx="18" cy="18" r="16" fill="none" className="stroke-current text-cyan-500" strokeWidth="2" strokeDasharray="100" strokeDashoffset="50"></circle>
+                                 <circle cx="18" cy="18" r="16" fill="none" className="stroke-current text-cyan-500" strokeWidth="2" strokeDasharray="100" strokeDashoffset="100" style={{strokeDashoffset: `calc(100 - (100 * 0) / 100)`}}></circle>
                               </svg>
                              <div className="absolute inset-0 flex items-center justify-center">
                                  <span className="text-2xl font-bold text-gray-800">0 / 25</span>

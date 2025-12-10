@@ -1,4 +1,6 @@
 
+"use client";
+
 import { Menu, Star, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,17 +11,20 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ShieldIcon } from "./icons";
+import { PlaceHolderImages } from "@/lib/placeholder-images";
+import { useMemo } from "react";
 
 export function Header() {
+    const userAvatar = useMemo(() => PlaceHolderImages.find(img => img.id === 'user-avatar'), []);
+
   return (
-    <header className="sticky top-0 z-10 flex h-16 w-full items-center justify-between border-b border-gray-200 bg-white px-4 md:px-6">
+    <header className="sticky top-0 z-50 flex h-16 w-full items-center justify-between border-b border-gray-200 bg-white px-4 md:px-6">
       <div className="flex items-center gap-x-4">
-        <Button variant="ghost" size="icon" className="md:hidden">
+        <Button variant="ghost" size="icon">
           <Menu className="h-6 w-6" />
           <span className="sr-only">Toggle menu</span>
         </Button>
-        <div className="hidden items-center gap-2 md:flex">
-             <Menu className="h-6 w-6 text-gray-600" />
+        <div className="flex items-center gap-2">
              <ShieldIcon className="h-6 w-6 text-gray-800" />
              <span className="text-lg font-semibold text-gray-800">Pentest Tools</span>
         </div>
@@ -51,8 +56,9 @@ export function Header() {
             <button className="flex items-center gap-2">
                 <Avatar className="h-8 w-8">
                   <AvatarImage
-                    src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwZXJzb24lMjBmYWNlfGVufDB8fHx8MTc2NTE4MzEwM3ww&ixlib=rb-4.1.0&q=80&w=1080"
-                    alt="User avatar"
+                    src={userAvatar?.imageUrl}
+                    alt={userAvatar?.description}
+                    data-ai-hint={userAvatar?.imageHint}
                   />
                   <AvatarFallback>U</AvatarFallback>
                 </Avatar>
@@ -62,7 +68,6 @@ export function Header() {
           <DropdownMenuContent className="w-56" align="end" forceMount>
             <DropdownMenuItem>Profile</DropdownMenuItem>
             <DropdownMenuItem>Settings</DropdownMenuItem>
-            <DropdownMenuContent />
             <DropdownMenuItem>Log out</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

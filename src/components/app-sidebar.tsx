@@ -48,7 +48,7 @@ export function AppSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-20 hidden h-full w-64 flex-col border-r border-gray-200 bg-gray-800 text-white md:flex">
+    <aside className="fixed inset-y-0 left-0 z-10 hidden h-full w-64 flex-col border-r border-gray-200 bg-gray-800 text-white md:flex">
       <div className="flex flex-col gap-y-6 p-4">
         <Button variant="warning" className="w-full justify-start">
             <Zap className="mr-2 h-4 w-4" />
