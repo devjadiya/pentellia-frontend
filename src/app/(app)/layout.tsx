@@ -10,7 +10,7 @@ import {
 export default function AppLayout({ children }: { children: ReactNode }) {
   return (
     <SidebarProvider>
-      <div className="relative flex min-h-screen bg-background">
+      <div className="relative flex min-h-screen bg-[#1a1f28]">
         <div className="hidden lg:flex">
             <Sidebar>
                 <AppSidebar />
