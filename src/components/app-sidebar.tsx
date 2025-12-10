@@ -15,10 +15,6 @@ import {
   Blocks,
   Settings,
   LayoutDashboard,
-  ChevronsUpDown,
-  LifeBuoy,
-  Plus,
-  Rocket,
 } from "lucide-react";
 import {
   SidebarHeader,
@@ -27,7 +23,6 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
-  SidebarGroup,
 } from "@/components/ui/sidebar";
 import {
   DropdownMenu,
@@ -38,7 +33,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Badge } from "./ui/badge";
 
@@ -63,10 +57,8 @@ export function AppSidebar() {
 
   return (
     <>
-      <SidebarHeader className="h-16">
-        <Link href="/dashboard" className="flex items-center gap-2">
-            <Rocket className="w-8 h-8 text-primary" />
-        </Link>
+      <SidebarHeader className="h-16 flex items-center justify-center">
+        {/* This space is intentionally left for alignment with the header */}
       </SidebarHeader>
       <SidebarContent className="p-2">
         <SidebarMenu>
@@ -78,6 +70,7 @@ export function AppSidebar() {
                   tooltip={item.label}
                 >
                   <item.icon />
+                  <span className="truncate">{item.label}</span>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
@@ -85,10 +78,10 @@ export function AppSidebar() {
         </SidebarMenu>
       </SidebarContent>
       <SidebarFooter>
-        <div className="border-t border-sidebar-border p-2">
+        <div className="border-t border-sidebar-border p-2 flex flex-col items-center">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex items-center justify-center gap-3 w-full p-2 rounded-md hover:bg-sidebar-accent relative">
+              <button className="flex items-center justify-center gap-3 w-full p-2 rounded-md hover:bg-sidebar-accent relative group-data-[state=collapsed]/sidebar-wrapper:p-0">
                 {userAvatar && (
                   <Avatar className="w-8 h-8">
                     <AvatarImage
@@ -101,7 +94,8 @@ export function AppSidebar() {
                     <AvatarFallback>U</AvatarFallback>
                   </Avatar>
                 )}
-                <Badge variant="destructive" className="absolute -top-1 -right-1 h-5 w-5 justify-center p-0">3</Badge>
+                <span className="truncate text-sm group-data-[state=collapsed]/sidebar-wrapper:hidden">My Account</span>
+                <Badge variant="destructive" className="absolute -top-1 -right-1 h-5 w-5 justify-center p-0 group-data-[state=expanded]/sidebar-wrapper:-top-1 group-data-[state=expanded]/sidebar-wrapper:-right-1 group-data-[state=collapsed]/sidebar-wrapper:top-0 group-data-[state=collapsed]/sidebar-wrapper:right-0">3</Badge>
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56 mb-2" align="end" side="top">

@@ -20,6 +20,7 @@ export function Header() {
       <div className="flex items-center gap-4">
         <SidebarTrigger className="shrink-0" />
         <Link href="/dashboard" className="flex items-center gap-2">
+            <Rocket className="w-8 h-8 text-primary" />
             <h1 className="text-xl font-semibold text-foreground">Pentellia</h1>
         </Link>
       </div>

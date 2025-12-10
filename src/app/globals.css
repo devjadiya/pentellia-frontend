@@ -5,13 +5,13 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 240 10% 97%; /* Very light gray */
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
+    --primary: 222.2 47.4% 11.2%; /* Dark Blue for buttons/primary actions */
     --primary-foreground: 210 40% 98%;
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
@@ -30,7 +30,7 @@
   .dark {
     --background: 222 24% 10%; /* #1a1f28 */
     --foreground: 220 14% 80%; /* #c5cfe0 */
-    --card: 222 22% 13%;      /* #242a34 */
+    --card: 224 23% 9%;      /* Card background */
     --card-foreground: 220 14% 80%;
     --popover: 224 23% 9%;
     --popover-foreground: 215 25% 85%;
@@ -49,7 +49,7 @@
     --ring: 188 95% 42%; /* cyan */
     --radius: 0.5rem;
 
-    --sidebar-background: 224 23% 6%;
+    --sidebar-background: 224 23% 9%;
     --sidebar-foreground: 216 12% 62%;
     --sidebar-primary: 188 95% 42%;
     --sidebar-primary-foreground: 222 47% 11%;
@@ -66,8 +66,5 @@
   }
   body {
     @apply bg-background text-foreground;
-  }
-  html {
-    @apply dark;
   }
 }

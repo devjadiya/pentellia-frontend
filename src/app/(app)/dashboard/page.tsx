@@ -163,7 +163,7 @@ export default function DashboardPage() {
       </div>
       
       <Tabs defaultValue="overview" className="space-y-6">
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b pb-6 border-border">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b pb-4 border-border">
           <TabsList>
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="whats-new">What's new</TabsTrigger>
@@ -185,7 +185,7 @@ export default function DashboardPage() {
         
         <TabsContent value="overview" className="mt-0 space-y-6">
           <div className="grid gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
-            <Card>
+            <Card className="shadow-none">
               <CardHeader>
                 <CardTitle className="text-lg font-semibold">
                   Attack Surface Summary
@@ -196,7 +196,7 @@ export default function DashboardPage() {
                   {attackSurfaceStats.map((stat) => (
                     <Card
                       key={stat.label}
-                      className="p-4 flex flex-col justify-between rounded-lg bg-background"
+                      className="p-4 flex flex-col justify-between rounded-lg bg-card shadow-none"
                     >
                       <div className="flex justify-end text-muted-foreground">
                         <stat.icon className="h-6 w-6" />
@@ -216,7 +216,7 @@ export default function DashboardPage() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="shadow-none">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-lg font-semibold">
                   Vulnerability summary
@@ -273,7 +273,7 @@ export default function DashboardPage() {
             </Card>
           </div>
 
-          <Card>
+          <Card className="shadow-none">
             <CardHeader>
               <CardTitle className="text-lg font-semibold">
                 Scan Activity
