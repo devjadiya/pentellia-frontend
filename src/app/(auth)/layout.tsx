@@ -2,8 +2,6 @@
 import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { ShieldIcon } from '@/components/icons';
-import LottiePlayer from '@/components/lottie-player';
-import animationData from '@/lib/cyber-animation.json';
 
 export default function AuthLayout({ children }: { children: ReactNode }) {
   return (
@@ -22,7 +20,6 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
           <div className="grid w-full max-w-6xl grid-cols-1 items-center gap-12 md:grid-cols-2">
             {/* Left Column: Animation */}
             <div className="hidden md:flex flex-col items-center justify-center text-center">
-               <LottiePlayer animationData={animationData} loop={true} autoPlay={true} />
                <div className="mt-8">
                   <h1 className="text-3xl font-bold tracking-tight text-white">Continuous Attack Surface Monitoring</h1>
                   <p className="mt-4 text-slate-400">Identify, analyze, and secure your digital footprint with Pentellia's AI-powered platform. Built for enterprise security teams.</p>
