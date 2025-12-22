@@ -18,7 +18,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
       <main className="flex-1">
         <div className="container mx-auto flex h-full items-center justify-center px-4 py-12 md:px-6">
           <div className="grid w-full max-w-6xl grid-cols-1 items-center gap-12 md:grid-cols-2">
-            {/* Left Column: Animation */}
+            {/* Left Column: Visual Placeholder */}
             <div className="hidden md:flex flex-col items-center justify-center text-center">
                <div className="mt-8">
                   <h1 className="text-3xl font-bold tracking-tight text-white">Continuous Attack Surface Monitoring</h1>
