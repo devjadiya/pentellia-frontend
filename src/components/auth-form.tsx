@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -54,6 +55,7 @@ export default function AuthForm({
 }) {
   const [view, setView] = useState<AuthView>(initialView);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isOauthSubmitting, setOauthSubmitting] = useState(false);
 
   const loginForm = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -76,7 +78,19 @@ export default function AuthForm({
   async function handleLogin(values: z.infer<typeof loginSchema>) {
     setIsSubmitting(true);
     console.log('Signing in with:', values);
-    // Fake action
+    // **BACKEND INTEGRATION POINT**
+    // TODO: Replace with Firebase signInWithEmailAndPassword
+    // Example:
+    // try {
+    //   const { email, password } = values;
+    //   await signInWithEmailAndPassword(auth, email, password);
+    //   // Redirect is handled by the auth state listener
+    // } catch (error) {
+    //   console.error("Login failed:", error);
+    //   // Handle and display error to the user
+    // } finally {
+    //   setIsSubmitting(false);
+    // }
     await new Promise((resolve) => setTimeout(resolve, 1000));
     setIsSubmitting(false);
     redirect('/dashboard');
@@ -85,10 +99,42 @@ export default function AuthForm({
   async function handleSignup(values: z.infer<typeof signupSchema>) {
     setIsSubmitting(true);
     console.log('Signing up with:', values);
-    // Fake action
+    // **BACKEND INTEGRATION POINT**
+    // TODO: Replace with Firebase createUserWithEmailAndPassword
+    // Example:
+    // try {
+    //   const { email, password, firstName, lastName } = values;
+    //   const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    //   await updateProfile(userCredential.user, { displayName: `${firstName} ${lastName}` });
+    //   // You might also want to create a user document in Firestore here
+    // } catch (error) {
+    //   console.error("Signup failed:", error);
+    //   // Handle and display error to the user
+    // } finally {
+    //   setIsSubmitting(false);
+    // }
     await new Promise((resolve) => setTimeout(resolve, 1000));
     setIsSubmitting(false);
     // For demo, redirect to dashboard. In a real app, you might go to a "verify email" page.
+    redirect('/dashboard');
+  }
+
+  async function handleGoogleSignIn() {
+    setOauthSubmitting(true);
+     // **BACKEND INTEGRATION POINT**
+    // TODO: Replace with Firebase signInWithPopup
+    // Example:
+    // try {
+    //   const provider = new GoogleAuthProvider();
+    //   await signInWithPopup(auth, provider);
+    //   // Redirect is handled by the auth state listener
+    // } catch (error) {
+    //   console.error("Google Sign-In failed:", error);
+    // } finally {
+    //    setOauthSubmitting(false);
+    // }
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    setOauthSubmitting(false);
     redirect('/dashboard');
   }
 
@@ -107,8 +153,8 @@ export default function AuthForm({
           </div>
         </div>
         <div className="grid gap-3">
-          <Button variant="outline-dark" className="w-full justify-center">
-            <GoogleIcon className="mr-2 h-4 w-4" />
+          <Button variant="outline-dark" className="w-full justify-center" onClick={handleGoogleSignIn} disabled={isSubmitting || isOauthSubmitting}>
+             {isOauthSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <GoogleIcon className="mr-2 h-4 w-4" />}
             Sign in with Google
           </Button>
           {/* Optional: Placeholder for Microsoft */}
@@ -188,7 +234,7 @@ export default function AuthForm({
                 />
                 <Button
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || isOauthSubmitting}
                   className="w-full bg-amber-500 text-slate-900 hover:bg-amber-400"
                 >
                   {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -203,7 +249,7 @@ export default function AuthForm({
                 type="button"
                 onClick={() => setView('signup')}
                 className="font-semibold text-amber-400 hover:text-amber-300 underline"
-                disabled={isSubmitting}
+                disabled={isSubmitting || isOauthSubmitting}
               >
                 Sign up
               </button>
@@ -302,7 +348,7 @@ export default function AuthForm({
                 />
                 <Button
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || isOauthSubmitting}
                   className="w-full bg-amber-500 text-slate-900 hover:bg-amber-400"
                 >
                    {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -328,7 +374,7 @@ export default function AuthForm({
                 type="button"
                 onClick={() => setView('login')}
                 className="font-semibold text-amber-400 hover:text-amber-300 underline"
-                disabled={isSubmitting}
+                disabled={isSubmitting || isOauthSubmitting}
               >
                 Login
               </button>
