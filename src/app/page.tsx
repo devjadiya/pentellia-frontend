@@ -10,7 +10,7 @@ export default function MarketingPage() {
             Continuous Attack Surface Monitoring
           </h1>
           <p className="mx-auto mt-6 max-w-[700px] text-lg text-slate-400">
-            Engineered for the modern enterprise security team.
+            Engineered for the modern enterprise security team - by encoderspro.
           </p>
         </div>
       </div>
