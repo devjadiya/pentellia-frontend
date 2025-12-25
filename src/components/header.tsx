@@ -1,7 +1,7 @@
 
 'use client';
 
-import { Menu, Star, Bell } from 'lucide-react';
+import { Menu, Star, Bell, SlidersHorizontal, KeyRound } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -68,7 +68,7 @@ export function Header({ toggleSidebar }: { toggleSidebar: () => void }) {
                 variant='ghost'
                 size='sm'
                 asChild 
-                className="rounded-full text-muted-foreground hover:bg-accent hover:text-foreground text-sm"
+                className="rounded-md text-muted-foreground hover:bg-accent hover:text-foreground text-sm"
             >
                 <Link href={link.href}>
                     {link.label}
@@ -81,8 +81,7 @@ export function Header({ toggleSidebar }: { toggleSidebar: () => void }) {
       {/* Right side: actions + user menu */}
       <div className="flex items-center gap-x-2 sm:gap-x-3">
         <Button variant="outline" className="hidden sm:inline-flex text-sm hover:bg-primary/10 hover:text-primary hover:border-primary">
-          <Star className="mr-2 h-4 w-4" />
-          Upgrade
+          Plans & Billing
         </Button>
         
         <Button variant="ghost" size="icon" className="h-9 w-9 text-foreground/80 hover:bg-accent hover:text-foreground">
@@ -110,9 +109,18 @@ export function Header({ toggleSidebar }: { toggleSidebar: () => void }) {
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56" align="end" forceMount>
             <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Account Settings</DropdownMenuItem>
-            <DropdownMenuItem>Billing</DropdownMenuItem>
-            <DropdownMenuItem>Audit Log</DropdownMenuItem>
+            <DropdownMenuItem>
+                <SlidersHorizontal className="mr-2 h-4 w-4" />
+                Account Settings
+            </DropdownMenuItem>
+             <DropdownMenuItem>
+                <KeyRound className="mr-2 h-4 w-4" />
+                API Keys
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+                <Star className="mr-2 h-4 w-4" />
+                Billing
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout}>Sign out</DropdownMenuItem>
           </DropdownMenuContent>
