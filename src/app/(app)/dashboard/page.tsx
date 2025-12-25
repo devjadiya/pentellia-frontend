@@ -18,7 +18,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowUp, ArrowDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
 const exposureTrendData = [
@@ -67,18 +67,6 @@ export default function DashboardPage() {
           delta="+5"
           deltaType="increase"
         />
-        <KpiCard 
-          title="Stale Findings (>90d)" 
-          metric="14"
-          delta="-3"
-          deltaType="decrease"
-        />
-        <KpiCard 
-          title="Scans Failed (24h)" 
-          metric="1"
-          delta="+1"
-          deltaType="increase"
-        />
          <KpiCard
             title="IP Addresses"
             metric="12"
@@ -91,7 +79,51 @@ export default function DashboardPage() {
             delta="+3"
             deltaType="increase"
         />
+         <KpiCard title="Open Ports" metric="34" delta="+3" deltaType="increase" />
+         <KpiCard title="Vulnerabilities" metric="43" delta="+5" deltaType="increase" />
       </div>
+
+      <Card>
+        <CardHeader>
+            <CardTitle className='text-base font-semibold'>Security Coverage & Hygiene</CardTitle>
+        </CardHeader>
+        <CardContent className='pt-0'>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              <KpiCard 
+                title="Asset Coverage" 
+                metric="92%"
+                delta="+1%"
+                deltaType="increase"
+                invertDeltaColor
+              />
+              <KpiCard 
+                title="Scan Freshness" 
+                metric="3d"
+                delta="-1d"
+                deltaType="decrease"
+                invertDeltaColor
+              />
+              <KpiCard 
+                title="Stale Findings" 
+                metric="8%"
+                delta="+2%"
+                deltaType="increase"
+              />
+              <KpiCard 
+                title="Exposed Services" 
+                metric="18"
+                delta="-1"
+                deltaType="decrease"
+              />
+              <KpiCard 
+                title="Surface Growth (7d)" 
+                metric="5"
+                delta="+2"
+                deltaType="increase"
+              />
+            </div>
+        </CardContent>
+      </Card>
       
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-7">
         <Card className="lg:col-span-5">
@@ -100,7 +132,7 @@ export default function DashboardPage() {
                  <CardTitle>Analytics</CardTitle>
                  <TabsList className="grid w-auto grid-cols-4 h-9">
                     <TabsTrigger value="vulnerabilities" className='text-xs px-2'>Vulnerabilities</TabsTrigger>
-                    <TabsTrigger value="critical" className='text-xs px-2'>Critical Findings</TabsTrigger>
+                    <TabsTrigger value="critical" className='text-xs px-2'>Critical</TabsTrigger>
                     <TabsTrigger value="assets" className='text-xs px-2'>New Assets</TabsTrigger>
                     <TabsTrigger value="risk" className='text-xs px-2'>Risk Score</TabsTrigger>
                 </TabsList>
@@ -123,8 +155,7 @@ export default function DashboardPage() {
         </Card>
         
         <div className="lg:col-span-2 grid grid-cols-2 md:grid-cols-2 gap-4">
-             <KpiCard title="Open Ports" metric="34" delta="+3" deltaType="increase" />
-             <KpiCard title="Vulnerabilities" metric="43" delta="+5" deltaType="increase" />
+             <KpiCard title="Scans Failed (24h)" metric="1" delta="+1" deltaType="increase" />
              <KpiCard title="Services" metric="18" delta="-1" deltaType="decrease" />
              <KpiCard title="Technologies" metric="29" delta="+2" deltaType="increase" />
         </div>
@@ -223,13 +254,20 @@ type KpiCardProps = {
     metric: string;
     delta: string;
     deltaType: 'increase' | 'decrease' | 'neutral';
+    invertDeltaColor?: boolean;
 }
 
-function KpiCard({ title, metric, delta, deltaType }: KpiCardProps) {
+function KpiCard({ title, metric, delta, deltaType, invertDeltaColor = false }: KpiCardProps) {
     const isIncrease = deltaType === 'increase';
     const isDecrease = deltaType === 'decrease';
-    // For cybersecurity, an increase in findings/assets is often negative (destructive), and a decrease is positive (success).
-    const deltaColor = isIncrease ? 'text-destructive' : isDecrease ? 'text-success' : 'text-muted-foreground';
+    
+    let colorClass;
+    if (invertDeltaColor) {
+        colorClass = isIncrease ? 'text-success' : isDecrease ? 'text-destructive' : 'text-muted-foreground';
+    } else {
+        colorClass = isIncrease ? 'text-destructive' : isDecrease ? 'text-success' : 'text-muted-foreground';
+    }
+
     const DeltaIcon = isIncrease ? ArrowUp : isDecrease ? ArrowDown : null;
 
     return (
@@ -240,7 +278,7 @@ function KpiCard({ title, metric, delta, deltaType }: KpiCardProps) {
             <CardContent className="p-4 pt-2 flex items-baseline gap-2">
                 <div className="text-2xl font-bold">{metric}</div>
                 {delta !== "0" && DeltaIcon && (
-                    <div className={cn("flex items-center gap-1 text-xs", deltaColor)}>
+                    <div className={cn("flex items-center gap-1 text-xs", colorClass)}>
                         <DeltaIcon className="h-3 w-3" />
                         <span>{delta.replace(/[+-]/g, '')}</span>
                     </div>
@@ -249,5 +287,3 @@ function KpiCard({ title, metric, delta, deltaType }: KpiCardProps) {
         </Card>
     );
 }
-
-    
