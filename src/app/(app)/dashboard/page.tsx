@@ -5,6 +5,7 @@ import {
   Area,
   AreaChart,
   CartesianGrid,
+  Legend,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -13,6 +14,8 @@ import {
 import type {ChartConfig} from '@/components/ui/chart';
 import {
   ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
   ChartTooltipContent,
 } from '@/components/ui/chart';
 
@@ -45,6 +48,14 @@ const chartConfig = {
     label: 'Medium',
     color: 'hsl(var(--chart-2))',
   },
+  high: {
+    label: 'High',
+    color: 'hsl(var(--chart-3))',
+  },
+  critical: {
+    label: 'Critical',
+    color: 'hsl(var(--chart-4))',
+  },
 } satisfies ChartConfig;
 
 export default function DashboardPage() {
@@ -75,23 +86,23 @@ export default function DashboardPage() {
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-7 lg:gap-8">
         {/* Vulnerability Summary Chart */}
-        <div className="lg:col-span-4">
-          <div className="flex items-center justify-between mb-4 h-8">
-            <h2 className="text-lg font-semibold text-foreground">
-              Vulnerability Summary
-            </h2>
-            <span className="text-xs text-muted-foreground">
-              Workspace overview – last 14 days
-            </span>
-          </div>
-          <div className="bg-card rounded-lg shadow-soft border border-border p-4 h-[350px]">
+        <div className="lg:col-span-4 bg-card rounded-lg shadow-soft border border-border">
+            <div className="flex items-center justify-between p-4 border-b border-border">
+              <h2 className="text-lg font-semibold text-foreground">
+                Vulnerability Summary
+              </h2>
+              <span className="text-xs text-muted-foreground">
+                Last 14 days
+              </span>
+            </div>
+            <div className='p-4 h-[350px]'>
             <ChartContainer config={chartConfig} className="h-full w-full">
               <AreaChart
                 accessibilityLayer
                 data={chartData}
                 margin={{
-                  left: 12,
-                  right: 12,
+                  left: -20,
+                  right: 20,
                   top: 10,
                   bottom: 10,
                 }}
@@ -100,29 +111,29 @@ export default function DashboardPage() {
                   <linearGradient id="fillLow" x1="0" y1="0" x2="0" y2="1">
                     <stop
                       offset="5%"
-                      stopColor="hsl(var(--primary))"
+                      stopColor="hsl(var(--chart-1))"
                       stopOpacity={0.8}
                     />
                     <stop
                       offset="95%"
-                      stopColor="hsl(var(--primary))"
+                      stopColor="hsl(var(--chart-1))"
                       stopOpacity={0.1}
                     />
                   </linearGradient>
                   <linearGradient id="fillMedium" x1="0" y1="0" x2="0" y2="1">
                     <stop
                       offset="5%"
-                      stopColor="hsl(var(--secondary))"
+                      stopColor="hsl(var(--chart-2))"
                       stopOpacity={0.8}
                     />
                     <stop
                       offset="95%"
-                      stopColor="hsl(var(--secondary))"
+                      stopColor="hsl(var(--chart-2))"
                       stopOpacity={0.1}
                     />
                   </linearGradient>
                 </defs>
-                <CartesianGrid vertical={false} strokeDasharray="3 3" />
+                <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsl(var(--border) / 0.5)" />
                 <XAxis
                   dataKey="date"
                   tickLine={false}
@@ -146,12 +157,13 @@ export default function DashboardPage() {
                   cursor={{stroke: 'hsl(var(--border))', strokeWidth: 2}}
                   content={<ChartTooltipContent indicator="dot" />}
                 />
+                <Legend content={<ChartLegendContent />} />
                 <Area
                   dataKey="medium"
                   type="natural"
                   fill="url(#fillMedium)"
                   fillOpacity={0.4}
-                  stroke="hsl(var(--secondary))"
+                  stroke="hsl(var(--chart-2))"
                   stackId="a"
                 />
                 <Area
@@ -159,12 +171,12 @@ export default function DashboardPage() {
                   type="natural"
                   fill="url(#fillLow)"
                   fillOpacity={0.4}
-                  stroke="hsl(var(--primary))"
+                  stroke="hsl(var(--chart-1))"
                   stackId="a"
                 />
               </AreaChart>
             </ChartContainer>
-          </div>
+            </div>
         </div>
 
         {/* Scan activity */}
@@ -175,10 +187,10 @@ export default function DashboardPage() {
             </h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-8">
-            <ActivityCard title="Running scans" value="0" total="2" />
-            <ActivityCard title="Waiting scans" value="0" total="25" />
-            <ActivityCard title="Scanned assets" value="0" total="5" />
-            <ActivityCard title="Added assets" value="1" total="100" />
+            <ActivityCard title="Running scans" value="0" />
+            <ActivityCard title="Waiting scans" value="0" />
+            <ActivityCard title="Scanned assets" value="0" />
+            <ActivityCard title="Added assets" value="1" />
           </div>
         </div>
       </div>
@@ -196,14 +208,14 @@ export default function DashboardPage() {
 
         <div className="bg-card rounded-lg shadow-soft border border-border overflow-hidden">
           <table className="w-full text-sm">
-            <thead className="bg-white/5 text-muted-foreground">
+            <thead className="bg-white/5">
               <tr>
-                <th className="px-6 py-3 text-left font-medium">Tool</th>
-                <th className="px-6 py-3 text-left font-medium">Target</th>
-                <th className="px-6 py-3 text-left font-medium">Workspace</th>
-                <th className="px-6 py-3 text-left font-medium">Start date</th>
-                <th className="px-6 py-3 text-left font-medium">Status</th>
-                <th className="px-6 py-3 text-right font-medium">View</th>
+                <th className="px-6 py-3 text-left font-medium text-muted-foreground">Tool</th>
+                <th className="px-6 py-3 text-left font-medium text-muted-foreground">Target</th>
+                <th className="px-6 py-3 text-left font-medium text-muted-foreground">Workspace</th>
+                <th className="px-6 py-3 text-left font-medium text-muted-foreground">Start date</th>
+                <th className="px-6 py-3 text-left font-medium text-muted-foreground">Status</th>
+                <th className="px-6 py-3 text-right font-medium text-muted-foreground">View</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -219,7 +231,7 @@ export default function DashboardPage() {
                   Oct 30, 2025 – 20:20
                 </td>
                 <td className="px-6 py-4">
-                  <span className="inline-flex items-center gap-2 rounded-full bg-success/10 px-2.5 py-1 text-xs font-medium text-success border border-success/20">
+                   <span className="inline-flex items-center gap-2 rounded-full bg-success/10 px-2.5 py-1 text-xs font-medium text-success border border-success/20">
                     <span className="h-2 w-2 rounded-full bg-success" />
                     Completed
                   </span>
@@ -247,14 +259,7 @@ type SummaryCardProps = {
 
 function SummaryCard({label, value}: SummaryCardProps) {
   return (
-    <div className="relative overflow-hidden rounded-lg bg-card p-4 shadow-soft">
-      {/* Gradient Border */}
-      <div
-        className="absolute inset-[-2px] -z-10 animate-[spin_3s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#7C5CFF_0%,#121826_50%,#7C5CFF_100%)] opacity-20 group-hover:opacity-50 transition-opacity duration-300"
-        aria-hidden="true"
-      />
-      <div className="absolute inset-0 bg-card" />
-      
+    <div className="relative overflow-hidden rounded-lg bg-card-surface p-4 shadow-soft border border-border">
       <div className="relative z-10 flex flex-col justify-between h-full">
         <span className="text-xs font-medium tracking-wide uppercase text-muted-foreground">
           {label}
@@ -268,66 +273,15 @@ function SummaryCard({label, value}: SummaryCardProps) {
 type ActivityCardProps = {
   title: string;
   value: string;
-  total: string;
 };
 
-function ActivityCard({title, value, total}: ActivityCardProps) {
-  const percentage = (parseInt(value) / parseInt(total)) * 100;
+function ActivityCard({title, value}: ActivityCardProps) {
   return (
     <div className="bg-card rounded-lg shadow-soft border border-border p-4 flex flex-col h-full">
       <span className="text-sm text-muted-foreground mb-2">{title}</span>
-
-      <div className="flex items-center justify-center flex-1 my-4">
-        <div className="relative h-24 w-24">
-          <svg className="h-full w-full" viewBox="0 0 100 100">
-            <circle
-              className="text-border/50"
-              strokeWidth="8"
-              stroke="currentColor"
-              fill="transparent"
-              r="42"
-              cx="50"
-              cy="50"
-            />
-            <circle
-              className="text-primary"
-              strokeWidth="8"
-              strokeDasharray="264"
-              strokeDashoffset={264 - (264 * percentage) / 100}
-              strokeLinecap="round"
-              stroke="currentColor"
-              fill="transparent"
-              r="42"
-              cx="50"
-              cy="50"
-              transform="rotate(-90 50 50)"
-            />
-          </svg>
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-2xl font-medium text-foreground">
-              {value}
-            </span>
-            <span className="text-xs text-muted-foreground">/ {total}</span>
-          </div>
-        </div>
+      <div className="flex items-baseline gap-2 mt-auto">
+        <span className="text-3xl font-medium text-foreground">{value}</span>
       </div>
-    </div>
-  );
-}
-
-type LegendDotProps = {
-  color: string;
-  label: string;
-};
-
-function LegendDot({color, label}: LegendDotProps) {
-  return (
-    <div className="flex items-center gap-2">
-      <span
-        className="h-3 w-3 rounded-full"
-        style={{backgroundColor: color}}
-      />
-      <span>{label}</span>
     </div>
   );
 }
