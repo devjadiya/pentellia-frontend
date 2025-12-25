@@ -49,12 +49,12 @@ const complianceTrendData = [
 
 
 const chartConfig = {
-  vulnerabilities: { label: 'Vulnerabilities', color: 'hsl(var(--primary))' },
+  vulnerabilities: { label: 'Vulnerabilities', color: 'hsl(var(--secondary))' },
   critical: { label: 'Critical', color: 'hsl(var(--destructive))' },
   high: { label: 'High', color: 'hsl(var(--warning))' },
   medium: { label: 'Medium', color: 'hsl(var(--secondary))' },
   low: { label: 'Low', color: 'hsl(var(--muted-foreground))' },
-  newAssets: { label: 'New Assets', color: 'hsl(var(--secondary))' },
+  newAssets: { label: 'New Assets', color: 'hsl(var(--primary))' },
   riskScore: { label: 'Risk Score', color: 'hsl(var(--warning))' },
   coverage: { label: 'Coverage', color: 'hsl(var(--primary))' },
   count: { label: 'Count' },
@@ -312,16 +312,11 @@ function AnalyticsChart({ dataKey }: { dataKey: keyof typeof chartConfig }) {
                     cursor={{ stroke: 'hsl(var(--border))', strokeWidth: 1 }}
                     content={<ChartTooltipContent indicator="dot" />}
                 />
-                <defs>
-                    <linearGradient id={`fill-${dataKey}`} x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor={color} stopOpacity={0.8} />
-                    <stop offset="95%" stopColor={color} stopOpacity={0.1} />
-                    </linearGradient>
-                </defs>
                 <Area
                     dataKey={dataKey}
                     type="natural"
-                    fill={`url(#fill-${dataKey})`}
+                    fill={color}
+                    fillOpacity={0.4}
                     stroke={color}
                     strokeWidth={2}
                 />
