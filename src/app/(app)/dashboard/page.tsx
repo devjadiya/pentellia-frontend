@@ -9,16 +9,13 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-  Legend
 } from 'recharts';
 import type {ChartConfig} from '@/components/ui/chart';
 import {
   ChartContainer,
-  ChartLegend,
-  ChartLegendContent,
   ChartTooltipContent,
 } from '@/components/ui/chart';
-import { Bot } from 'lucide-react';
+import { BrainCircuit } from 'lucide-react';
 
 const chartData = [
   {date: '2024-07-01', low: 1, medium: 2, high: 0, critical: 1},
@@ -72,12 +69,13 @@ export default function DashboardPage() {
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 lg:gap-8">
         {/* Exposure Trend Chart */}
-        <div className="lg:col-span-3 xl:col-span-3 bg-card rounded-lg shadow-soft border border-border">
+        <div className="lg:col-span-3 xl:col-span-3 bg-card rounded-lg shadow-soft border border-border transition-transform duration-200 hover:-translate-y-1">
             <div className="flex items-center justify-between p-4 md:p-6 border-b border-border">
               <div className='flex items-center gap-4 h-8'>
                 <h2 className="text-lg font-semibold text-foreground">
                   Exposure Trend
                 </h2>
+                <span className="text-xs font-semibold uppercase tracking-wider bg-accent text-accent-foreground/80 px-2 py-1 rounded-full">AI Insight</span>
               </div>
               <span className="text-xs text-muted-foreground">
                 Last 14 days
@@ -177,7 +175,6 @@ export default function DashboardPage() {
                   stroke="hsl(var(--chart-4))"
                   stackId="a"
                 />
-                <Legend content={<ChartLegendContent />} />
               </AreaChart>
             </ChartContainer>
             </div>
@@ -185,14 +182,17 @@ export default function DashboardPage() {
         
         {/* Active Risk Signals */}
         <div className="lg:col-span-1 xl:col-span-1 space-y-8">
-            <h2 className="text-lg font-semibold text-foreground">
-                Active Risk Signals
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4 lg:gap-8">
-                <ActivityCard title="Running scans" value="0" />
-                <ActivityCard title="Waiting scans" value="0" />
-                <ActivityCard title="Scanned assets" value="0" />
-                <ActivityCard title="New assets" value="1" />
+            <AiInsightCard />
+            <div className="space-y-4">
+                <h2 className="text-lg font-semibold text-foreground">
+                    Active Risk Signals
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4 lg:gap-4">
+                    <ActivityCard title="Running scans" value="0" />
+                    <ActivityCard title="Waiting scans" value="0" />
+                    <ActivityCard title="Scanned assets" value="0" />
+                    <ActivityCard title="New assets" value="1" />
+                </div>
             </div>
         </div>
       </div>
@@ -269,6 +269,27 @@ export default function DashboardPage() {
 
 /* --- Small components to keep things clean --- */
 
+function AiInsightCard() {
+    return (
+        <div className="relative overflow-hidden rounded-lg bg-card p-4 shadow-soft border-border transition-transform duration-200 hover:-translate-y-1">
+            <div className="absolute inset-0 bg-gradient-pulse bg-[length:200%_100%] from-primary/10 via-card to-card" />
+            <div className="relative">
+                <div className="flex items-start gap-4">
+                    <div className="bg-primary/10 p-2 rounded-lg border border-primary/20">
+                        <BrainCircuit className="h-5 w-5 text-primary" />
+                    </div>
+                    <div className='flex-1'>
+                        <h3 className="text-md font-semibold text-foreground">Potential Risk Cluster Detected</h3>
+                        <p className="text-sm text-muted-foreground mt-1">
+                            An unusual concentration of medium-severity findings has been identified on assets related to the 'legacy-api' tag.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
+
 type SummaryCardProps = {
   label: string;
   value: string;
@@ -276,7 +297,7 @@ type SummaryCardProps = {
 
 function SummaryCard({label, value}: SummaryCardProps) {
   return (
-    <div className="relative overflow-hidden rounded-lg bg-card p-4 shadow-soft border border-border">
+    <div className="relative overflow-hidden rounded-lg bg-card p-4 shadow-soft border border-border transition-transform duration-200 hover:-translate-y-1">
       <div className="relative z-10 flex flex-col justify-between h-full">
         <span className="text-xs font-medium tracking-wide uppercase text-muted-foreground">
           {label}
@@ -294,7 +315,7 @@ type ActivityCardProps = {
 
 function ActivityCard({title, value}: ActivityCardProps) {
   return (
-    <div className="bg-card rounded-lg shadow-soft border border-border p-4 md:p-6 flex flex-col h-full">
+    <div className="bg-card rounded-lg shadow-soft border border-border p-4 flex flex-col h-full transition-transform duration-200 hover:-translate-y-1">
       <span className="text-sm text-muted-foreground mb-2">{title}</span>
       <div className="flex items-baseline gap-2 mt-auto">
         <span className="text-3xl font-medium text-foreground">{value}</span>

@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
-  Bot,
+  Cpu,
   Package,
   FileText,
   ShieldCheck,
@@ -38,7 +38,7 @@ const navItems = [
 
 const configItems = [
   { href: '/reports', icon: FileText, label: 'Reports' },
-  { href: '/robots', icon: Bot, label: 'Robots' },
+  { href: '/robots', icon: Cpu, label: 'Robots' },
   { href: '/team', icon: Users, label: 'Team' },
   { href: '/integrations', icon: Blocks, label: 'Integrations' },
   { href: '/settings', icon: Settings, label: 'Settings' },
