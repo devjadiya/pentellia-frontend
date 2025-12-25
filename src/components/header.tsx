@@ -120,10 +120,6 @@ export function Header({ toggleSidebar }: { toggleSidebar: () => void }) {
                 <ScrollText className="mr-2 h-4 w-4" />
                 Audit Logs
             </DropdownMenuItem>
-            <DropdownMenuItem>
-                <Star className="mr-2 h-4 w-4" />
-                Billing
-            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout}>Sign out</DropdownMenuItem>
           </DropdownMenuContent>

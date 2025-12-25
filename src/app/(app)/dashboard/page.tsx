@@ -344,7 +344,7 @@ function KpiCard({ title, metric, delta, deltaType, invertDeltaColor = false }: 
     
     let colorClass;
     if (invertDeltaColor) {
-        colorClass = isIncrease ? 'text-destructive' : isDecrease ? 'text-success' : 'text-muted-foreground';
+        colorClass = isIncrease ? 'text-success' : isDecrease ? 'text-destructive' : 'text-muted-foreground';
     } else {
         colorClass = isIncrease ? 'text-destructive' : isDecrease ? 'text-success' : 'text-muted-foreground';
     }
@@ -394,7 +394,5 @@ function StatusIndicator({ label, value, status, Icon }: StatusIndicatorProps) {
         </div>
     );
 }
-
-    
 
     
