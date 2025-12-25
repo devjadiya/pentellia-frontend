@@ -40,59 +40,12 @@ const exposureTrendConfig = {
 } satisfies ChartConfig;
 
 
-const newAssetsData = [
-  {date: 'Mon', assets: 2},
-  {date: 'Tue', assets: 3},
-  {date: 'Wed', assets: 1},
-  {date: 'Thu', assets: 4},
-  {date: 'Fri', assets: 2},
-  {date: 'Sat', assets: 5},
-  {date: 'Sun', assets: 3},
-];
-
-const ipData = [
-    { date: 'Mon', count: 5 },
-    { date: 'Tue', count: 6 },
-    { date: 'Wed', count: 5 },
-    { date: 'Thu', count: 7 },
-    { date: 'Fri', count: 8 },
-    { date: 'Sat', count: 8 },
-    { date: 'Sun', count: 9 },
-];
-
-const hostnameData = [
-    { date: 'Mon', count: 12 },
-    { date: 'Tue', count: 12 },
-    { date: 'Wed', count: 15 },
-    { date: 'Thu', count: 14 },
-    { date: 'Fri', count: 16 },
-    { date: 'Sat', count: 18 },
-    { date: 'Sun', count: 17 },
-];
-
-const openPortsData = [
-    { date: 'Mon', count: 30 },
-    { date: 'Tue', count: 28 },
-    { date: 'Wed', count: 29 },
-    { date: 'Thu', count: 32 },
-    { date: 'Fri', count: 31 },
-    { date: 'Sat', count: 30 },
-    { date: 'Sun', count: 34 },
-];
-
 const vulnerabilitiesBySeverityData = [
     { severity: 'Low', count: 18, fill: 'hsl(var(--chart-1))' },
     { severity: 'Medium', count: 12, fill: 'hsl(var(--chart-2))' },
     { severity: 'High', count: 5, fill: 'hsl(var(--chart-3))' },
     { severity: 'Critical', count: 8, fill: 'hsl(var(--destructive))' },
 ];
-
-const newAssetsConfig = {
-  assets: {
-    label: 'New Assets',
-    color: 'hsl(var(--chart-2))',
-  },
-} satisfies ChartConfig;
 
 const vulnerabilitiesBySeverityConfig = {
     count: {
@@ -118,17 +71,14 @@ const vulnerabilitiesBySeverityConfig = {
 
 export default function DashboardPage() {
   return (
-    <div className="flex-1 space-y-8 p-4 pt-6 md:p-8">
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <div className="flex-1 space-y-6 p-4 pt-6 md:p-8">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
         <KpiCard 
           title="Open Critical Findings" 
           metric="8"
           delta="+2"
           deltaType="increase"
           icon={AlertTriangle}
-          chartData={exposureTrendData}
-          chartKey="vulnerabilities"
-          chartColor="hsl(var(--destructive))"
         />
         <KpiCard 
           title="New Assets (7d)" 
@@ -136,9 +86,6 @@ export default function DashboardPage() {
           delta="+5.2%"
           deltaType="increase"
           icon={Target}
-          chartData={newAssetsData}
-          chartKey="assets"
-          chartColor="hsl(var(--chart-2))"
         />
         <KpiCard 
           title="Stale Findings (>90d)" 
@@ -160,9 +107,6 @@ export default function DashboardPage() {
             delta="+1"
             deltaType="increase"
             icon={Network}
-            chartData={ipData}
-            chartKey="count"
-            chartColor="hsl(var(--chart-1))"
         />
         <KpiCard
             title="Hostnames"
@@ -170,9 +114,6 @@ export default function DashboardPage() {
             delta="+1"
             deltaType="increase"
             icon={Globe}
-            chartData={hostnameData}
-            chartKey="count"
-            chartColor="hsl(var(--chart-4))"
         />
         <KpiCard
             title="Open Ports"
@@ -180,19 +121,16 @@ export default function DashboardPage() {
             delta="+3"
             deltaType="increase"
             icon={DoorOpen}
-            chartData={openPortsData}
-            chartKey="count"
-            chartColor="hsl(var(--chart-3))"
         />
         <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">Vulnerabilities</CardTitle>
+                <CardTitle className="text-xs font-medium text-muted-foreground">Vulnerabilities</CardTitle>
                 <Activity className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-                <div className="text-4xl font-bold">43</div>
+                <div className="text-2xl font-bold">43</div>
                 <p className="text-xs text-muted-foreground">+5 from yesterday</p>
-                <div className="h-16 w-full">
+                <div className="mt-2 h-16 w-full">
                     <ChartContainer config={vulnerabilitiesBySeverityConfig} className="h-full w-full">
                         <BarChart
                           accessibilityLayer
@@ -208,7 +146,7 @@ export default function DashboardPage() {
                                 axisLine={false}
                                 tick={false}
                             />
-                            <Bar dataKey="count" radius={4} barSize={12}>
+                            <Bar dataKey="count" radius={4} barSize={8}>
                             </Bar>
                         </BarChart>
                     </ChartContainer>
@@ -341,63 +279,20 @@ type KpiCardProps = {
     delta: string;
     deltaType: 'increase' | 'decrease';
     icon: React.ElementType;
-    chartData?: any[];
-    chartKey?: string;
-    chartColor?: string;
 }
 
-function KpiCard({ title, metric, delta, deltaType, icon: Icon, chartData, chartKey, chartColor }: KpiCardProps) {
+function KpiCard({ title, metric, delta, deltaType, icon: Icon }: KpiCardProps) {
     const deltaColor = deltaType === 'increase' ? 'text-destructive' : 'text-success';
 
     return (
         <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
+                <CardTitle className="text-xs font-medium text-muted-foreground">{title}</CardTitle>
                 <Icon className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-                <div className="flex items-start justify-between">
-                  <div className='flex flex-col'>
-                    <div className="text-4xl font-bold">{metric}</div>
-                    <p className={`text-xs ${deltaColor}`}>{delta} from yesterday</p>
-                  </div>
-                  {chartData && chartKey && chartColor && (
-                    <div className="h-16 w-28">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart
-                          data={chartData}
-                          margin={{ top: 5, right: 0, left: 0, bottom: 0 }}
-                        >
-                           <defs>
-                              <linearGradient id={`fill-${chartKey}`} x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor={chartColor} stopOpacity={0.4}/>
-                                <stop offset="95%" stopColor={chartColor} stopOpacity={0.05}/>
-                              </linearGradient>
-                           </defs>
-                          <Tooltip
-                            cursor={false}
-                            contentStyle={{ 
-                              backgroundColor: 'hsl(var(--background))',
-                              border: '1px solid hsl(var(--border))',
-                              borderRadius: 'calc(var(--radius) - 2px)',
-                              fontSize: '12px',
-                              padding: '4px 8px'
-                            }}
-                            labelStyle={{ display: 'none' }}
-                          />
-                          <Area
-                            type="monotone"
-                            dataKey={chartKey}
-                            stroke={chartColor}
-                            strokeWidth={2}
-                            fillOpacity={1}
-                            fill={`url(#fill-${chartKey})`}
-                          />
-                        </AreaChart>
-                      </ResponsiveContainer>
-                    </div>
-                  )}
-                </div>
+                <div className="text-2xl font-bold">{metric}</div>
+                <p className={`text-xs ${deltaColor}`}>{delta} from yesterday</p>
             </CardContent>
         </Card>
     );
@@ -416,9 +311,5 @@ function SummaryItem({label, value}: SummaryItemProps) {
         </div>
     )
 }
-
-    
-
-    
 
     
