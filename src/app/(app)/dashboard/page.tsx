@@ -17,9 +17,10 @@ import {
   ChartContainer,
   ChartTooltipContent,
 } from '@/components/ui/chart';
-import { Activity, AlertTriangle, FileWarning, Target, ShieldAlert, Network, Globe, DoorOpen } from 'lucide-react';
+import { Activity, AlertTriangle, FileWarning, Target, ShieldAlert, Network, Globe, DoorOpen, ArrowUp, ArrowDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
 
 const exposureTrendData = [
   {date: '2024-07-01', vulnerabilities: 21},
@@ -47,42 +48,36 @@ export default function DashboardPage() {
           metric="8"
           delta="+2"
           deltaType="increase"
-          icon={AlertTriangle}
         />
         <KpiCard 
           title="New Assets (7d)" 
           metric="20"
-          delta="+5.2%"
+          delta="+5"
           deltaType="increase"
-          icon={Target}
         />
         <KpiCard 
           title="Stale Findings (>90d)" 
           metric="14"
           delta="-3"
           deltaType="decrease"
-          icon={FileWarning}
         />
         <KpiCard 
           title="Scans Failed (24h)" 
           metric="1"
           delta="+1"
           deltaType="increase"
-          icon={ShieldAlert}
         />
          <KpiCard
             title="IP Addresses"
             metric="12"
             delta="+1"
             deltaType="increase"
-            icon={Network}
         />
         <KpiCard
             title="Hostnames"
             metric="31"
             delta="+3"
             deltaType="increase"
-            icon={Globe}
         />
       </div>
       
@@ -140,8 +135,8 @@ export default function DashboardPage() {
         </Card>
         
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-             <KpiCard title="Open Ports" metric="34" delta="+3" deltaType="increase" icon={DoorOpen} />
-             <KpiCard title="Vulnerabilities" metric="43" delta="+5" deltaType="increase" icon={Activity} />
+             <KpiCard title="Open Ports" metric="34" delta="+3" deltaType="increase" />
+             <KpiCard title="Vulnerabilities" metric="43" delta="+5" deltaType="increase" />
              <KpiCard title="Services" metric="18" delta="-1" deltaType="decrease" />
              <KpiCard title="Technologies" metric="29" delta="+2" deltaType="increase" />
              <KpiCard title="Exposed Assets" metric="2" delta="0" deltaType="neutral" />
@@ -202,23 +197,28 @@ type KpiCardProps = {
     metric: string;
     delta: string;
     deltaType: 'increase' | 'decrease' | 'neutral';
-    icon?: React.ElementType;
 }
 
-function KpiCard({ title, metric, delta, deltaType, icon: Icon }: KpiCardProps) {
-    const deltaColor = deltaType === 'increase' ? 'text-destructive' : deltaType === 'decrease' ? 'text-success' : 'text-muted-foreground';
+function KpiCard({ title, metric, delta, deltaType }: KpiCardProps) {
+    const isIncrease = deltaType === 'increase';
+    const isDecrease = deltaType === 'decrease';
+    // For cybersecurity, an increase in findings/assets is often negative (destructive), and a decrease is positive (success).
+    const deltaColor = isIncrease ? 'text-destructive' : isDecrease ? 'text-success' : 'text-muted-foreground';
+    const DeltaIcon = isIncrease ? ArrowUp : isDecrease ? ArrowDown : null;
 
     return (
         <Card>
-            <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+            <CardHeader className="p-4 pb-0">
                 <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
-                {Icon && <Icon className="h-4 w-4 text-muted-foreground" />}
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-4 pt-2 flex items-baseline gap-2">
                 <div className="text-2xl font-bold">{metric}</div>
-                <p className={`text-xs text-muted-foreground`}>
-                    <span className={deltaColor}>{delta}</span> since last period
-                </p>
+                {delta !== "0" && DeltaIcon && (
+                    <div className={cn("flex items-center gap-1 text-xs", deltaColor)}>
+                        <DeltaIcon className="h-3 w-3" />
+                        <span>{delta.replace(/[+-]/g, '')}</span>
+                    </div>
+                )}
             </CardContent>
         </Card>
     );
