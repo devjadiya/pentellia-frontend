@@ -82,30 +82,30 @@ export default function DashboardPage() {
     <div className="flex-1 space-y-4 p-4 pt-6 md:p-8">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
-          <CardHeader>
-            <CardTitle className='text-base font-semibold'>Exposure KPIs</CardTitle>
+          <CardHeader className='p-3'>
+            <CardTitle className='text-sm font-semibold'>Exposure KPIs</CardTitle>
           </CardHeader>
-          <CardContent className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-             <KpiCard title="Open Critical Findings" metric="8" delta="+2" deltaType="increase" />
+          <CardContent className="grid grid-cols-2 lg:grid-cols-3 gap-3 p-3 pt-0">
+             <KpiCard title="Open Critical" metric="8" delta="+2" deltaType="increase" />
              <KpiCard title="Vulnerabilities" metric="43" delta="+5" deltaType="increase" />
              <KpiCard title="Open Ports" metric="34" delta="+3" deltaType="increase" />
           </CardContent>
         </Card>
         <Card>
-          <CardHeader>
-            <CardTitle className='text-base font-semibold'>Asset KPIs</CardTitle>
+          <CardHeader className='p-3'>
+            <CardTitle className='text-sm font-semibold'>Asset KPIs</CardTitle>
           </CardHeader>
-          <CardContent className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+          <CardContent className="grid grid-cols-2 lg:grid-cols-3 gap-3 p-3 pt-0">
               <KpiCard title="IP Addresses" metric="12" delta="+1" deltaType="increase" />
               <KpiCard title="Hostnames" metric="31" delta="+3" deltaType="increase" />
               <KpiCard title="Technologies" metric="29" delta="+2" deltaType="increase" />
           </CardContent>
         </Card>
         <Card>
-          <CardHeader>
-            <CardTitle className='text-base font-semibold'>Operational KPIs</CardTitle>
+          <CardHeader className='p-3'>
+            <CardTitle className='text-sm font-semibold'>Operational KPIs</CardTitle>
           </CardHeader>
-          <CardContent className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+          <CardContent className="grid grid-cols-2 lg:grid-cols-3 gap-3 p-3 pt-0">
               <KpiCard title="Scans Failed (24h)" metric="1" delta="+1" deltaType="increase" />
               <KpiCard title="Scan Freshness" metric="3d" delta="-1d" deltaType="decrease" invertDeltaColor/>
               <KpiCard title="New Assets (7d)" metric="20" delta="+5" deltaType="increase" />
@@ -114,20 +114,20 @@ export default function DashboardPage() {
       </div>
       
       <Card>
-        <CardHeader>
-            <CardTitle>Security Posture & Compliance</CardTitle>
+        <CardHeader className='p-3 pb-2'>
+            <CardTitle className='text-sm font-semibold'>Security Posture & Compliance</CardTitle>
         </CardHeader>
-        <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 p-3 pt-0">
             <StatusIndicator label="Operational Status" value="Live" status="ok" />
             <StatusIndicator label="Scan Coverage" value="94%" status="ok" />
             <StatusIndicator label="NIST CSF Alignment" value="Partial" status="warning" />
             <StatusIndicator label="SLA Health" value="At Risk" status="danger" />
 
-            <div className="md:col-span-2 lg:col-span-1 flex flex-col gap-2">
-                <p className="text-sm font-medium text-muted-foreground">Control Coverage Trend</p>
+            <div className="md:col-span-2 lg:col-span-1 flex flex-col gap-1 p-2 rounded-lg bg-card border-none">
+                <p className="text-xs font-medium text-muted-foreground">Control Coverage Trend</p>
                 <div className="h-[40px]">
                     <ChartContainer config={chartConfig} className="w-full h-full">
-                        <AreaChart accessibilityLayer data={complianceTrendData} margin={{ top: 5, right: 10, left: 10, bottom: 0 }}>
+                        <AreaChart accessibilityLayer data={complianceTrendData} margin={{ top: 5, right: 0, left: 0, bottom: 0 }}>
                             <defs>
                                 <linearGradient id="fillCoverage" x1="0" y1="0" x2="0" y2="1">
                                 <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.8} />
@@ -150,9 +150,9 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-7">
         <Card className="lg:col-span-4">
             <Tabs defaultValue="critical" className="h-full w-full">
-              <CardHeader className='flex-row items-center justify-between'>
+              <CardHeader className='flex-row items-center justify-between p-3'>
                  <div className='flex flex-col gap-1.5'>
-                    <CardTitle>Analytics</CardTitle>
+                    <CardTitle className='text-sm font-semibold'>Analytics</CardTitle>
                  </div>
                  <div className="flex items-center gap-2">
                     <Button variant="outline" size="sm" className='h-8 text-xs'>
@@ -171,7 +171,7 @@ export default function DashboardPage() {
                     </TabsList>
                  </div>
               </CardHeader>
-              <CardContent className="h-[250px] w-full p-2 pt-4">
+              <CardContent className="h-[250px] w-full p-2 pt-0">
                 <TabsContent value="vulnerabilities" className='h-full w-full m-0'>
                     <AnalyticsChart dataKey="vulnerabilities" />
                 </TabsContent>
@@ -189,20 +189,20 @@ export default function DashboardPage() {
         </Card>
         
         <Card className="lg:col-span-3">
-            <CardHeader>
-                <CardTitle>Comparative Risk Signals</CardTitle>
+            <CardHeader className='p-3'>
+                <CardTitle className='text-sm font-semibold'>Comparative Risk Signals</CardTitle>
             </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4 p-3 pt-0">
                 <div className='flex flex-col gap-2'>
-                    <p className='text-sm text-muted-foreground font-medium'>Findings Trend</p>
+                    <p className='text-xs text-muted-foreground font-medium'>Findings Trend</p>
                     <div className='h-[200px] w-full'>
                         <ChartContainer config={chartConfig} className="w-full h-full">
-                            <BarChart data={findingsTrendData} accessibilityLayer margin={{left: -20, right: 20}}>
+                            <BarChart data={findingsTrendData} accessibilityLayer margin={{left: -30, right: 10, top: 10}}>
                                 <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsl(var(--border) / 0.5)" />
-                                <XAxis dataKey="period" tickLine={false} axisLine={false} tickMargin={8} tick={{fontSize: 12}} />
-                                <YAxis tickLine={false} axisLine={false} tickMargin={8} width={30} />
+                                <XAxis dataKey="period" tickLine={false} axisLine={false} tickMargin={8} tick={{fontSize: 10}} />
+                                <YAxis tickLine={false} axisLine={false} tickMargin={8} width={30} tick={{fontSize: 10}} />
                                 <Tooltip cursor={{fill: 'hsl(var(--accent))'}} content={<ChartTooltipContent />} />
-                                <Legend content={<ChartLegendContent />} />
+                                <Legend content={<ChartLegendContent className='text-xs'/>} />
                                 <Bar dataKey="critical" stackId="a" fill="var(--color-critical)" radius={[4, 4, 0, 0]} />
                                 <Bar dataKey="high" stackId="a" fill="var(--color-high)" radius={[0, 0, 0, 0]} />
                             </BarChart>
@@ -210,26 +210,26 @@ export default function DashboardPage() {
                     </div>
                 </div>
                  <div className='flex flex-col gap-2'>
-                    <p className='text-sm text-muted-foreground font-medium'>Asset Risk Distribution</p>
+                    <p className='text-xs text-muted-foreground font-medium'>Asset Risk Distribution</p>
                     <div className='h-[200px] w-full flex items-center justify-center'>
                         <ChartContainer config={chartConfig} className="w-full h-full">
                             <PieChart>
                                 <Tooltip content={<ChartTooltipContent nameKey="assets" hideLabel />} />
-                                <Pie data={assetRiskData} dataKey="assets" nameKey='risk' innerRadius={50} outerRadius={80} >
-                                     <Legend content={<ChartLegendContent />} />
+                                <Pie data={assetRiskData} dataKey="assets" nameKey='risk' innerRadius={50} outerRadius={70} paddingAngle={2}>
+                                     <Legend content={<ChartLegendContent className='text-xs' />} />
                                 </Pie>
                             </PieChart>
                         </ChartContainer>
                     </div>
                 </div>
                 <div className='flex flex-col gap-2'>
-                    <p className='text-sm text-muted-foreground font-medium'>Open Vulnerability Age</p>
+                    <p className='text-xs text-muted-foreground font-medium'>Open Vulnerability Age</p>
                     <div className='h-[200px] w-full'>
                          <ChartContainer config={chartConfig} className="w-full h-full">
-                            <BarChart data={vulnerabilityAgeData} accessibilityLayer margin={{left: -20, right: 20}}>
+                            <BarChart data={vulnerabilityAgeData} accessibilityLayer margin={{left: -30, right: 10, top: 10}}>
                                  <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsl(var(--border) / 0.5)" />
-                                <XAxis dataKey="age" tickLine={false} axisLine={false} tickMargin={8} tick={{fontSize: 12}} />
-                                <YAxis tickLine={false} axisLine={false} tickMargin={8} width={30} />
+                                <XAxis dataKey="age" tickLine={false} axisLine={false} tickMargin={8} tick={{fontSize: 10}} />
+                                <YAxis tickLine={false} axisLine={false} tickMargin={8} width={30} tick={{fontSize: 10}} />
                                 <Tooltip cursor={{fill: 'hsl(var(--accent))'}} content={<ChartTooltipContent />} />
                                 <Bar dataKey="count" fill="var(--color-medium)" radius={[4, 4, 0, 0]} />
                             </BarChart>
@@ -241,42 +241,42 @@ export default function DashboardPage() {
       </div>
       
       <Card>
-        <CardHeader>
-            <CardTitle>Latest Scans</CardTitle>
+        <CardHeader className='p-3'>
+            <CardTitle className='text-sm font-semibold'>Latest Scans</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className='p-3 pt-0'>
             <div className="overflow-hidden border border-border rounded-lg">
             <table className="w-full text-sm">
                 <thead className="bg-white/5">
                 <tr className='border-b-0'>
-                    <th className="px-6 py-3 text-left font-semibold text-muted-foreground">Tool</th>
-                    <th className="px-6 py-3 text-left font-semibold text-muted-foreground">Target</th>
-                    <th className="px-6 py-3 text-left font-semibold text-muted-foreground">Workspace</th>
-                    <th className="px-6 py-3 text-left font-semibold text-muted-foreground">Start date</th>
-                    <th className="px-6 py-3 text-left font-semibold text-muted-foreground">Status</th>
-                    <th className="px-6 py-3 text-right font-semibold text-muted-foreground">View</th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-muted-foreground">Tool</th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-muted-foreground">Target</th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-muted-foreground">Workspace</th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-muted-foreground">Start date</th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-muted-foreground">Status</th>
+                    <th className="px-4 py-2 text-right text-xs font-semibold text-muted-foreground">View</th>
                 </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
-                <tr className="transition-colors">
-                    <td className="px-6 py-4 whitespace-nowrap text-secondary-foreground">
+                <tr className="transition-colors text-xs">
+                    <td className="px-4 py-2 whitespace-nowrap text-secondary-foreground">
                     Website Scanner
                     </td>
-                    <td className="px-6 py-4 text-foreground/80">
+                    <td className="px-4 py-2 text-foreground/80">
                     https://www.gohighlevel.com/78486a1
                     </td>
-                    <td className="px-6 py-4 text-foreground/80">My Workspace</td>
-                    <td className="px-6 py-4 text-foreground/80">
+                    <td className="px-4 py-2 text-foreground/80">My Workspace</td>
+                    <td className="px-4 py-2 text-foreground/80">
                     Oct 30, 2025 – 20:20
                     </td>
-                    <td className="px-6 py-4">
-                    <span className="inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-xs font-medium text-success-foreground bg-success/10 border border-success/20">
-                        <span className="h-2 w-2 rounded-full bg-success" />
+                    <td className="px-4 py-2">
+                    <span className="inline-flex items-center gap-2 rounded-full px-2 py-0.5 text-xs font-medium text-success-foreground bg-success/10 border border-success/20">
+                        <span className="h-1.5 w-1.5 rounded-full bg-success" />
                         Completed
                     </span>
                     </td>
-                    <td className="px-6 py-4 text-right">
-                    <Button variant='link' className='p-0 h-auto text-primary'>View status</Button>
+                    <td className="px-4 py-2 text-right">
+                    <Button variant='link' className='p-0 h-auto text-primary text-xs'>View status</Button>
                     </td>
                 </tr>
                 </tbody>
@@ -295,7 +295,7 @@ function AnalyticsChart({ dataKey }: { dataKey: keyof typeof chartConfig }) {
             <AreaChart
                 accessibilityLayer
                 data={exposureTrendData}
-                margin={{ left: 12, right: 12, top: 10, bottom: 10, }}
+                margin={{ left: 0, right: 12, top: 10, bottom: 0, }}
             >
                 <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsl(var(--border) / 0.5)" />
                 <XAxis
@@ -304,9 +304,9 @@ function AnalyticsChart({ dataKey }: { dataKey: keyof typeof chartConfig }) {
                     axisLine={false}
                     tickMargin={8}
                     tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                    tick={{fontSize: 12}}
+                    tick={{fontSize: 10}}
                 />
-                <YAxis tickLine={false} axisLine={false} tickMargin={8} width={30} tick={{fontSize: 12}} />
+                <YAxis tickLine={false} axisLine={false} tickMargin={8} width={30} tick={{fontSize: 10}} />
                 <Tooltip
                     cursor={{ stroke: 'hsl(var(--border))', strokeWidth: 1 }}
                     content={<ChartTooltipContent indicator="dot" />}
@@ -346,11 +346,11 @@ function KpiCard({ title, metric, delta, deltaType, invertDeltaColor = false }: 
     const DeltaIcon = isIncrease ? ArrowUp : isDecrease ? ArrowDown : null;
 
     return (
-        <Card className='flex flex-col justify-between'>
-            <CardHeader className="p-4 pb-0">
-                <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
+        <Card className='flex flex-col justify-between p-3'>
+            <CardHeader className="p-0 pb-1">
+                <CardTitle className="text-xs font-medium text-muted-foreground">{title}</CardTitle>
             </CardHeader>
-            <CardContent className="p-4 pt-2 flex items-baseline justify-between">
+            <CardContent className="p-0 flex items-baseline justify-between">
                 <div className="text-2xl font-bold">{metric}</div>
                 {delta !== "0" && DeltaIcon && (
                     <div className={cn("flex items-center gap-1 text-xs", colorClass)}>
@@ -377,20 +377,14 @@ function StatusIndicator({ label, value, status }: StatusIndicatorProps) {
     };
 
     return (
-        <div className="flex flex-col gap-2 p-4 rounded-lg bg-card border border-border">
-            <p className="text-sm font-medium text-muted-foreground">{label}</p>
+        <div className="flex flex-col gap-1 p-2 rounded-lg bg-card border border-border">
+            <p className="text-xs font-medium text-muted-foreground">{label}</p>
             <div className="flex items-center gap-2">
-                <span className={cn('h-2.5 w-2.5 rounded-full', statusColor[status])} />
-                <span className="text-lg font-semibold">{value}</span>
+                <span className={cn('h-2 w-2 rounded-full', statusColor[status])} />
+                <span className="text-base font-semibold">{value}</span>
             </div>
         </div>
     );
 }
-    
-
-    
-
-
-
 
     
