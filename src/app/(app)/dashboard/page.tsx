@@ -23,7 +23,7 @@ import {
   ChartLegendContent,
 } from '@/components/ui/chart';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowUp, ArrowDown, FileWarning, Activity, Scan, AlertCircle } from 'lucide-react';
+import { ArrowUp, ArrowDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -68,83 +68,41 @@ const vulnerabilityAgeData = [
 export default function DashboardPage() {
   return (
     <div className="flex-1 space-y-4 p-4 pt-6 md:p-8">
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-4 xl:grid-cols-6">
-        <KpiCard 
-          title="Open Critical Findings" 
-          metric="8"
-          delta="+2"
-          deltaType="increase"
-          icon={<FileWarning className="h-4 w-4 text-muted-foreground" />}
-        />
-        <KpiCard 
-          title="New Assets (7d)" 
-          metric="20"
-          delta="+5"
-          deltaType="increase"
-           icon={<Activity className="h-4 w-4 text-muted-foreground" />}
-        />
-         <KpiCard
-            title="IP Addresses"
-            metric="12"
-            delta="+1"
-            deltaType="increase"
-            icon={<Activity className="h-4 w-4 text-muted-foreground" />}
-        />
-        <KpiCard
-            title="Hostnames"
-            metric="31"
-            delta="+3"
-            deltaType="increase"
-            icon={<Activity className="h-4 w-4 text-muted-foreground" />}
-        />
-         <KpiCard title="Open Ports" metric="34" delta="+3" deltaType="increase" icon={<Scan className="h-4 w-4 text-muted-foreground" />} />
-         <KpiCard title="Vulnerabilities" metric="43" delta="+5" deltaType="increase" icon={<AlertCircle className="h-4 w-4 text-muted-foreground" />} />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card>
+          <CardHeader>
+            <CardTitle className='text-base font-semibold'>Exposure KPIs</CardTitle>
+          </CardHeader>
+          <CardContent className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+             <KpiCard title="Open Critical Findings" metric="8" delta="+2" deltaType="increase" />
+             <KpiCard title="Vulnerabilities" metric="43" delta="+5" deltaType="increase" />
+             <KpiCard title="Open Ports" metric="34" delta="+3" deltaType="increase" />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className='text-base font-semibold'>Asset KPIs</CardTitle>
+          </CardHeader>
+          <CardContent className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+              <KpiCard title="IP Addresses" metric="12" delta="+1" deltaType="increase" />
+              <KpiCard title="Hostnames" metric="31" delta="+3" deltaType="increase" />
+              <KpiCard title="Technologies" metric="29" delta="+2" deltaType="increase" />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className='text-base font-semibold'>Operational KPIs</CardTitle>
+          </CardHeader>
+          <CardContent className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+              <KpiCard title="Scans Failed (24h)" metric="1" delta="+1" deltaType="increase" />
+              <KpiCard title="Scan Freshness" metric="3d" delta="-1d" deltaType="decrease" invertDeltaColor/>
+              <KpiCard title="New Assets (7d)" metric="20" delta="+5" deltaType="increase" />
+          </CardContent>
+        </Card>
       </div>
 
-      <Card>
-        <CardHeader>
-            <CardTitle className='text-base font-semibold'>Security Coverage & Hygiene</CardTitle>
-        </CardHeader>
-        <CardContent className='pt-0'>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-              <KpiCard 
-                title="Asset Coverage" 
-                metric="92%"
-                delta="+1%"
-                deltaType="increase"
-                invertDeltaColor
-              />
-              <KpiCard 
-                title="Scan Freshness" 
-                metric="3d"
-                delta="-1d"
-                deltaType="decrease"
-                invertDeltaColor
-              />
-              <KpiCard 
-                title="Stale Findings" 
-                metric="8%"
-                delta="+2%"
-                deltaType="increase"
-              />
-              <KpiCard 
-                title="Exposed Services" 
-                metric="18"
-                delta="-1"
-                deltaType="decrease"
-              />
-              <KpiCard 
-                title="Surface Growth (7d)" 
-                metric="5"
-                delta="+2"
-                deltaType="increase"
-              />
-            </div>
-        </CardContent>
-      </Card>
-      
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-7">
-        <Card className="lg:col-span-5">
+        <Card className="lg:col-span-4">
             <Tabs defaultValue="critical" className="h-full w-full">
               <CardHeader className='flex-row items-center justify-between'>
                  <CardTitle>Analytics</CardTitle>
@@ -172,64 +130,58 @@ export default function DashboardPage() {
             </Tabs>
         </Card>
         
-        <div className="lg:col-span-2 grid grid-cols-2 md:grid-cols-2 gap-4">
-             <KpiCard title="Scans Failed (24h)" metric="1" delta="+1" deltaType="increase" />
-             <KpiCard title="Services" metric="18" delta="-1" deltaType="decrease" />
-             <KpiCard title="Technologies" metric="29" delta="+2" deltaType="increase" />
-        </div>
+        <Card className="lg:col-span-3">
+            <CardHeader>
+                <CardTitle>Comparative Risk Signals</CardTitle>
+            </CardHeader>
+            <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className='flex flex-col gap-2'>
+                    <p className='text-sm text-muted-foreground font-medium'>Findings Trend</p>
+                    <div className='h-[200px] w-full'>
+                        <ChartContainer config={chartConfig} className="w-full h-full">
+                            <BarChart data={findingsTrendData} accessibilityLayer margin={{left: -20, right: 20}}>
+                                <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsl(var(--border) / 0.5)" />
+                                <XAxis dataKey="period" tickLine={false} axisLine={false} tickMargin={8} />
+                                <YAxis tickLine={false} axisLine={false} tickMargin={8} width={30} />
+                                <Tooltip cursor={{fill: 'hsl(var(--accent))'}} content={<ChartTooltipContent />} />
+                                <Legend content={<ChartLegendContent />} />
+                                <Bar dataKey="critical" stackId="a" fill="var(--color-critical)" radius={[4, 4, 0, 0]} />
+                                <Bar dataKey="high" stackId="a" fill="var(--color-high)" radius={[0, 0, 0, 0]} />
+                            </BarChart>
+                        </ChartContainer>
+                    </div>
+                </div>
+                 <div className='flex flex-col gap-2'>
+                    <p className='text-sm text-muted-foreground font-medium'>Asset Risk Distribution</p>
+                    <div className='h-[200px] w-full flex items-center justify-center'>
+                        <ChartContainer config={chartConfig} className="w-full h-full">
+                            <PieChart>
+                                <Tooltip content={<ChartTooltipContent nameKey="assets" hideLabel />} />
+                                <Pie data={assetRiskData} dataKey="assets" nameKey='risk' innerRadius={50} outerRadius={80} >
+                                     <Legend content={<ChartLegendContent />} />
+                                </Pie>
+                            </PieChart>
+                        </ChartContainer>
+                    </div>
+                </div>
+                <div className='flex flex-col gap-2'>
+                    <p className='text-sm text-muted-foreground font-medium'>Open Vulnerability Age</p>
+                    <div className='h-[200px] w-full'>
+                         <ChartContainer config={chartConfig} className="w-full h-full">
+                            <BarChart data={vulnerabilityAgeData} accessibilityLayer margin={{left: -20, right: 20}}>
+                                 <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsl(var(--border) / 0.5)" />
+                                <XAxis dataKey="age" tickLine={false} axisLine={false} tickMargin={8} />
+                                <YAxis tickLine={false} axisLine={false} tickMargin={8} width={30} />
+                                <Tooltip cursor={{fill: 'hsl(var(--accent))'}} content={<ChartTooltipContent />} />
+                                <Bar dataKey="count" fill="var(--color-medium)" radius={[4, 4, 0, 0]} />
+                            </BarChart>
+                        </ChartContainer>
+                    </div>
+                </div>
+            </CardContent>
+       </Card>
       </div>
       
-       <Card>
-        <CardHeader>
-            <CardTitle>Comparative Risk Signals</CardTitle>
-        </CardHeader>
-        <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className='flex flex-col gap-2'>
-                <p className='text-sm text-muted-foreground font-medium'>Findings Trend</p>
-                <div className='h-[200px] w-full'>
-                    <ChartContainer config={chartConfig} className="w-full h-full">
-                        <BarChart data={findingsTrendData} accessibilityLayer margin={{left: -20, right: 20}}>
-                            <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsl(var(--border) / 0.5)" />
-                            <XAxis dataKey="period" tickLine={false} axisLine={false} tickMargin={8} />
-                            <YAxis tickLine={false} axisLine={false} tickMargin={8} width={30} />
-                            <Tooltip cursor={{fill: 'hsl(var(--accent))'}} content={<ChartTooltipContent />} />
-                            <Legend content={<ChartLegendContent />} />
-                            <Bar dataKey="critical" stackId="a" fill="var(--color-critical)" radius={[4, 4, 0, 0]} />
-                            <Bar dataKey="high" stackId="a" fill="var(--color-high)" radius={[0, 0, 0, 0]} />
-                        </BarChart>
-                    </ChartContainer>
-                </div>
-            </div>
-             <div className='flex flex-col gap-2'>
-                <p className='text-sm text-muted-foreground font-medium'>Asset Risk Distribution</p>
-                <div className='h-[200px] w-full flex items-center justify-center'>
-                    <ChartContainer config={chartConfig} className="w-full h-full">
-                        <PieChart>
-                            <Tooltip content={<ChartTooltipContent nameKey="assets" hideLabel />} />
-                            <Pie data={assetRiskData} dataKey="assets" nameKey='risk' innerRadius={50} outerRadius={80} >
-                                 <Legend content={<ChartLegendContent />} />
-                            </Pie>
-                        </PieChart>
-                    </ChartContainer>
-                </div>
-            </div>
-            <div className='flex flex-col gap-2'>
-                <p className='text-sm text-muted-foreground font-medium'>Open Vulnerability Age</p>
-                <div className='h-[200px] w-full'>
-                     <ChartContainer config={chartConfig} className="w-full h-full">
-                        <BarChart data={vulnerabilityAgeData} accessibilityLayer margin={{left: -20, right: 20}}>
-                             <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsl(var(--border) / 0.5)" />
-                            <XAxis dataKey="age" tickLine={false} axisLine={false} tickMargin={8} />
-                            <YAxis tickLine={false} axisLine={false} tickMargin={8} width={30} />
-                            <Tooltip cursor={{fill: 'hsl(var(--accent))'}} content={<ChartTooltipContent />} />
-                            <Bar dataKey="count" fill="var(--color-medium)" radius={[4, 4, 0, 0]} />
-                        </BarChart>
-                    </ChartContainer>
-                </div>
-            </div>
-        </CardContent>
-       </Card>
-
       <Card>
         <CardHeader>
             <CardTitle>Latest Scans</CardTitle>
@@ -319,10 +271,9 @@ type KpiCardProps = {
     delta: string;
     deltaType: 'increase' | 'decrease' | 'neutral';
     invertDeltaColor?: boolean;
-    icon?: React.ReactNode;
 }
 
-function KpiCard({ title, metric, delta, deltaType, invertDeltaColor = false, icon }: KpiCardProps) {
+function KpiCard({ title, metric, delta, deltaType, invertDeltaColor = false }: KpiCardProps) {
     const isIncrease = deltaType === 'increase';
     const isDecrease = deltaType === 'decrease';
     
@@ -336,12 +287,11 @@ function KpiCard({ title, metric, delta, deltaType, invertDeltaColor = false, ic
     const DeltaIcon = isIncrease ? ArrowUp : isDecrease ? ArrowDown : null;
 
     return (
-        <Card>
-            <CardHeader className="p-4 flex-row items-center justify-between pb-0">
+        <Card className='flex flex-col justify-between'>
+            <CardHeader className="p-4 pb-0">
                 <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
-                {icon}
             </CardHeader>
-            <CardContent className="p-4 pt-2 flex items-baseline gap-2">
+            <CardContent className="p-4 pt-2 flex items-baseline justify-between">
                 <div className="text-2xl font-bold">{metric}</div>
                 {delta !== "0" && DeltaIcon && (
                     <div className={cn("flex items-center gap-1 text-xs", colorClass)}>
@@ -353,3 +303,5 @@ function KpiCard({ title, metric, delta, deltaType, invertDeltaColor = false, ic
         </Card>
     );
 }
+
+    
