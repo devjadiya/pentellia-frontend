@@ -17,7 +17,7 @@ import {
   ChartContainer,
   ChartTooltipContent,
 } from '@/components/ui/chart';
-import { Activity, AlertTriangle, FileWarning, Target, Bot, ShieldAlert, FileText, Server, Users, Blocks, Settings } from 'lucide-react';
+import { Activity, AlertTriangle, FileWarning, Target, Bot, ShieldAlert, FileText, Server, Users, Blocks, Settings, Network, Globe, DoorOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
 import Link from 'next/link';
@@ -50,11 +50,70 @@ const newAssetsData = [
   {date: 'Sun', assets: 3},
 ];
 
+const ipData = [
+    { date: 'Mon', count: 5 },
+    { date: 'Tue', count: 6 },
+    { date: 'Wed', count: 5 },
+    { date: 'Thu', count: 7 },
+    { date: 'Fri', count: 8 },
+    { date: 'Sat', count: 8 },
+    { date: 'Sun', count: 9 },
+];
+
+const hostnameData = [
+    { date: 'Mon', count: 12 },
+    { date: 'Tue', count: 12 },
+    { date: 'Wed', count: 15 },
+    { date: 'Thu', count: 14 },
+    { date: 'Fri', count: 16 },
+    { date: 'Sat', count: 18 },
+    { date: 'Sun', count: 17 },
+];
+
+const openPortsData = [
+    { date: 'Mon', count: 30 },
+    { date: 'Tue', count: 28 },
+    { date: 'Wed', count: 29 },
+    { date: 'Thu', count: 32 },
+    { date: 'Fri', count: 31 },
+    { date: 'Sat', count: 30 },
+    { date: 'Sun', count: 34 },
+];
+
+const vulnerabilitiesBySeverityData = [
+    { severity: 'Low', count: 18, fill: 'hsl(var(--chart-1))' },
+    { severity: 'Medium', count: 12, fill: 'hsl(var(--chart-2))' },
+    { severity: 'High', count: 5, fill: 'hsl(var(--chart-3))' },
+    { severity: 'Critical', count: 8, fill: 'hsl(var(--destructive))' },
+];
+
 const newAssetsConfig = {
   assets: {
     label: 'New Assets',
     color: 'hsl(var(--chart-2))',
   },
+} satisfies ChartConfig;
+
+const vulnerabilitiesBySeverityConfig = {
+    count: {
+        label: "Count"
+    },
+    low: {
+        label: "Low",
+        color: "hsl(var(--chart-1))"
+    },
+    medium: {
+        label: "Medium",
+        color: "hsl(var(--chart-2))"
+    },
+    high: {
+        label: "High",
+        color: "hsl(var(--chart-3))"
+    },
+    critical: {
+        label: "Critical",
+        color: "hsl(var(--destructive))"
+    }
 } satisfies ChartConfig;
 
 export default function DashboardPage() {
@@ -95,6 +154,67 @@ export default function DashboardPage() {
           deltaType="increase"
           icon={ShieldAlert}
         />
+         <KpiCard
+            title="IP Addresses"
+            metric="9"
+            delta="+1"
+            deltaType="increase"
+            icon={Network}
+            chartData={ipData}
+            chartKey="count"
+            chartColor="hsl(var(--chart-1))"
+        />
+        <KpiCard
+            title="Hostnames"
+            metric="17"
+            delta="+1"
+            deltaType="increase"
+            icon={Globe}
+            chartData={hostnameData}
+            chartKey="count"
+            chartColor="hsl(var(--chart-4))"
+        />
+        <KpiCard
+            title="Open Ports"
+            metric="34"
+            delta="+3"
+            deltaType="increase"
+            icon={DoorOpen}
+            chartData={openPortsData}
+            chartKey="count"
+            chartColor="hsl(var(--chart-3))"
+        />
+        <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">Vulnerabilities</CardTitle>
+                <Activity className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+                <div className="text-4xl font-bold">43</div>
+                <p className="text-xs text-muted-foreground">+5 from yesterday</p>
+                <div className="h-16 w-full">
+                    <ChartContainer config={vulnerabilitiesBySeverityConfig} className="h-full w-full">
+                        <BarChart
+                          accessibilityLayer
+                          data={vulnerabilitiesBySeverityData}
+                          layout="vertical"
+                          margin={{ top: 15, right: 0, left: -20, bottom: 0 }}
+                        >
+                            <XAxis type="number" hide />
+                            <YAxis
+                                dataKey="severity"
+                                type="category"
+                                tickLine={false}
+                                axisLine={false}
+                                tick={false}
+                            />
+                            <Bar dataKey="count" radius={4} barSize={12}>
+                            </Bar>
+                        </BarChart>
+                    </ChartContainer>
+                </div>
+            </CardContent>
+        </Card>
       </div>
       
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
@@ -296,5 +416,7 @@ function SummaryItem({label, value}: SummaryItemProps) {
         </div>
     )
 }
+
+    
 
     
