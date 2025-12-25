@@ -23,7 +23,7 @@ import {
   ChartLegendContent,
 } from '@/components/ui/chart';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowUp, ArrowDown, CalendarDays, Filter, Pipeline, Clock } from 'lucide-react';
+import { ArrowUp, ArrowDown, CalendarDays, Filter, Workflow, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -119,7 +119,7 @@ export default function DashboardPage() {
         </CardHeader>
         <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-3 p-3 pt-0">
             <StatusIndicator label="Operational Status" value="Live" status="ok" />
-            <StatusIndicator label="Detection Pipeline" value="Operational" status="ok" Icon={Pipeline} />
+            <StatusIndicator label="Detection Pipeline" value="Operational" status="ok" Icon={Workflow} />
             <StatusIndicator label="Last Scan" value="2h ago" status="ok" Icon={Clock}/>
             <StatusIndicator label="SLA Health" value="At Risk" status="danger" />
             <StatusIndicator label="NIST CSF Alignment" value="Partial" status="warning" />
@@ -394,5 +394,7 @@ function StatusIndicator({ label, value, status, Icon }: StatusIndicatorProps) {
         </div>
     );
 }
+
+    
 
     
