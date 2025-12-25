@@ -34,9 +34,9 @@ export function Header({ toggleSidebar }: { toggleSidebar: () => void }) {
   };
 
   const navLinks = [
-    { label: 'Security Overview', href: '#' },
+    { label: 'Overview', href: '#' },
     { label: 'Threat Context', href: '#' },
-    { label: 'How It Works', href: '#' },
+    { label: 'Reports', href: '#' },
   ];
 
   return (
@@ -61,14 +61,14 @@ export function Header({ toggleSidebar }: { toggleSidebar: () => void }) {
 
       {/* Center: Contextual Nav */}
       <nav className="hidden md:flex flex-1 items-center justify-center">
-        <div className="flex items-center gap-2 rounded-full border border-border bg-background p-1">
+        <div className="flex items-center gap-2 rounded-full p-1">
           {navLinks.map((link) => (
             <Button 
                 key={link.href}
                 variant='ghost'
                 size='sm'
                 asChild 
-                className="rounded-full text-muted-foreground hover:text-foreground"
+                className="rounded-full text-muted-foreground hover:bg-accent hover:text-foreground text-sm"
             >
                 <Link href={link.href}>
                     {link.label}
@@ -80,7 +80,7 @@ export function Header({ toggleSidebar }: { toggleSidebar: () => void }) {
 
       {/* Right side: actions + user menu */}
       <div className="flex items-center gap-x-2 sm:gap-x-3">
-        <Button variant="outline" className="hidden sm:inline-flex text-sm border-secondary/50 text-secondary hover:bg-secondary/10 hover:text-secondary hover:border-secondary">
+        <Button variant="outline" className="hidden sm:inline-flex text-sm hover:bg-primary/10 hover:text-primary hover:border-primary">
           <Star className="mr-2 h-4 w-4" />
           Upgrade
         </Button>
@@ -110,10 +110,11 @@ export function Header({ toggleSidebar }: { toggleSidebar: () => void }) {
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56" align="end" forceMount>
             <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Workspace settings</DropdownMenuItem>
-            <DropdownMenuItem>Security preferences</DropdownMenuItem>
+            <DropdownMenuItem>Account Settings</DropdownMenuItem>
+            <DropdownMenuItem>Billing</DropdownMenuItem>
+            <DropdownMenuItem>Audit Log</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout}>Log out</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>Sign out</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
