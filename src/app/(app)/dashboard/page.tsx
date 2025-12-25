@@ -23,7 +23,7 @@ import {
   ChartLegendContent,
 } from '@/components/ui/chart';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowUp, ArrowDown } from 'lucide-react';
+import { ArrowUp, ArrowDown, FileWarning, Activity, Scan, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -74,27 +74,31 @@ export default function DashboardPage() {
           metric="8"
           delta="+2"
           deltaType="increase"
+          icon={<FileWarning className="h-4 w-4 text-muted-foreground" />}
         />
         <KpiCard 
           title="New Assets (7d)" 
           metric="20"
           delta="+5"
           deltaType="increase"
+           icon={<Activity className="h-4 w-4 text-muted-foreground" />}
         />
          <KpiCard
             title="IP Addresses"
             metric="12"
             delta="+1"
             deltaType="increase"
+            icon={<Activity className="h-4 w-4 text-muted-foreground" />}
         />
         <KpiCard
             title="Hostnames"
             metric="31"
             delta="+3"
             deltaType="increase"
+            icon={<Activity className="h-4 w-4 text-muted-foreground" />}
         />
-         <KpiCard title="Open Ports" metric="34" delta="+3" deltaType="increase" />
-         <KpiCard title="Vulnerabilities" metric="43" delta="+5" deltaType="increase" />
+         <KpiCard title="Open Ports" metric="34" delta="+3" deltaType="increase" icon={<Scan className="h-4 w-4 text-muted-foreground" />} />
+         <KpiCard title="Vulnerabilities" metric="43" delta="+5" deltaType="increase" icon={<AlertCircle className="h-4 w-4 text-muted-foreground" />} />
       </div>
 
       <Card>
@@ -283,12 +287,6 @@ function AnalyticsChart({ dataKey }: { dataKey: keyof typeof chartConfig }) {
                 data={exposureTrendData}
                 margin={{ left: -20, right: 20, top: 10, bottom: 10, }}
             >
-                <defs>
-                    <linearGradient id={`${dataKey}-gradient`} x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor={color} stopOpacity={0.4} />
-                    <stop offset="95%" stopColor={color} stopOpacity={0.1} />
-                    </linearGradient>
-                </defs>
                 <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsl(var(--border) / 0.5)" />
                 <XAxis
                     dataKey="date"
@@ -305,7 +303,8 @@ function AnalyticsChart({ dataKey }: { dataKey: keyof typeof chartConfig }) {
                 <Area
                     dataKey={dataKey}
                     type="natural"
-                    fill={`url(#${dataKey}-gradient)`}
+                    fill={color}
+                    fillOpacity={0.4}
                     stroke={color}
                     strokeWidth={2}
                 />
@@ -320,9 +319,10 @@ type KpiCardProps = {
     delta: string;
     deltaType: 'increase' | 'decrease' | 'neutral';
     invertDeltaColor?: boolean;
+    icon?: React.ReactNode;
 }
 
-function KpiCard({ title, metric, delta, deltaType, invertDeltaColor = false }: KpiCardProps) {
+function KpiCard({ title, metric, delta, deltaType, invertDeltaColor = false, icon }: KpiCardProps) {
     const isIncrease = deltaType === 'increase';
     const isDecrease = deltaType === 'decrease';
     
@@ -337,8 +337,9 @@ function KpiCard({ title, metric, delta, deltaType, invertDeltaColor = false }: 
 
     return (
         <Card>
-            <CardHeader className="p-4 pb-0">
+            <CardHeader className="p-4 flex-row items-center justify-between pb-0">
                 <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
+                {icon}
             </CardHeader>
             <CardContent className="p-4 pt-2 flex items-baseline gap-2">
                 <div className="text-2xl font-bold">{metric}</div>
@@ -352,5 +353,3 @@ function KpiCard({ title, metric, delta, deltaType, invertDeltaColor = false }: 
         </Card>
     );
 }
-
-    

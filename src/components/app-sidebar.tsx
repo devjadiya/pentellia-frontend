@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import {
   Package,
   FileText,
-  ShieldCheck,
+  Shield,
   FileSearch,
   Crosshair,
   Blocks,
@@ -22,7 +22,7 @@ import { Button } from '@/components/ui/button';
 const navItems = [
   { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
   { href: '/assets', icon: Package, label: 'Assets' },
-  { href: '/scans', icon: ShieldCheck, label: 'Scans' },
+  { href: '/scans', icon: Shield, label: 'Scans' },
   { href: '/findings', icon: FileSearch, label: 'Findings' },
   { href: '/attack-surface', icon: Crosshair, label: 'Attack Surface' },
   { href: '/reports', icon: FileText, label: 'Reports' },
