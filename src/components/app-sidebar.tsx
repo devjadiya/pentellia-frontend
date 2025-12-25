@@ -83,7 +83,7 @@ export function AppSidebar({ isSidebarOpen }: { isSidebarOpen: boolean }) {
                     !isSidebarOpen && 'justify-center'
                   )}
                 >
-                  <LayoutDashboard className="h-5 w-5" />
+                  <LayoutDashboard className="h-5 w-5 text-muted-foreground" />
                   {isSidebarOpen && (
                     <>
                       <span className="ml-2">My Workspace</span>
@@ -100,22 +100,30 @@ export function AppSidebar({ isSidebarOpen }: { isSidebarOpen: boolean }) {
           </div>
 
           <nav className="space-y-1 text-sm">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  'flex items-center rounded-lg px-3 py-2 text-muted-foreground hover:bg-accent hover:text-foreground',
-                  !isSidebarOpen && 'justify-center',
-                  pathname.startsWith(item.href)
-                    ? 'bg-accent font-medium text-foreground'
-                    : ''
-                )}
-              >
-                <item.icon className="h-5 w-5" />
-                {isSidebarOpen && <span className="ml-3">{item.label}</span>}
-              </Link>
-            ))}
+            {navItems.map((item) => {
+              const isActive = pathname.startsWith(item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    'group relative flex items-center rounded-lg px-3 py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground',
+                    !isSidebarOpen && 'justify-center',
+                    isActive && 'text-foreground'
+                  )}
+                >
+                   {isActive && (
+                    <div className="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-primary to-primary/50" />
+                  )}
+                  <item.icon className={cn(
+                      'h-5 w-5 text-muted-foreground transition-colors group-hover:text-foreground',
+                      isActive && 'text-primary'
+                      )}
+                   />
+                  {isSidebarOpen && <span className="ml-3">{item.label}</span>}
+                </Link>
+              );
+            })}
           </nav>
 
           <div>
@@ -125,20 +133,29 @@ export function AppSidebar({ isSidebarOpen }: { isSidebarOpen: boolean }) {
               </p>
             )}
             <nav className="space-y-1 text-sm">
-              {configItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={cn(
-                    'flex items-center rounded-lg px-3 py-2 text-muted-foreground hover:bg-accent hover:text-foreground',
-                    !isSidebarOpen && 'justify-center',
-                     pathname.startsWith(item.href) ? 'bg-accent font-medium text-foreground' : ''
-                  )}
-                >
-                  <item.icon className="h-5 w-5" />
-                  {isSidebarOpen && <span className="ml-3">{item.label}</span>}
-                </Link>
-              ))}
+              {configItems.map((item) => {
+                 const isActive = pathname.startsWith(item.href);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={cn(
+                      'group relative flex items-center rounded-lg px-3 py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground',
+                      !isSidebarOpen && 'justify-center',
+                      isActive && 'text-foreground'
+                    )}
+                  >
+                    {isActive && (
+                      <div className="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-primary to-primary/50" />
+                    )}
+                    <item.icon className={cn(
+                      'h-5 w-5 text-muted-foreground transition-colors group-hover:text-foreground',
+                      isActive && 'text-primary'
+                      )} />
+                    {isSidebarOpen && <span className="ml-3">{item.label}</span>}
+                  </Link>
+                );
+              })}
             </nav>
           </div>
         </div>
