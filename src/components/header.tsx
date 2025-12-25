@@ -11,13 +11,13 @@ import {
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ShieldIcon } from './icons';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useMemo } from 'react';
 import { signOut } from 'firebase/auth';
 import { auth } from '@/config/firebaseClient';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export function Header({ toggleSidebar }: { toggleSidebar: () => void }) {
   const userAvatar = useMemo(
@@ -53,9 +53,13 @@ export function Header({ toggleSidebar }: { toggleSidebar: () => void }) {
           <Menu className="h-5 w-5" />
         </Button>
 
-        <Link href="/dashboard" className="flex items-center gap-2">
-          <ShieldIcon className="h-6 w-6 text-primary" />
-          <span className="text-lg font-semibold">Pentellia</span>
+        <Link href="/dashboard" className="flex items-center">
+          <Image
+            src="https://blush-fashionable-swift-557.mypinata.cloud/ipfs/bafkreihyjqoev5bqtru5clk4iazyjfwjzaz4te6qr43o6j7closdivtqoq"
+            alt="Pentellia Logo"
+            width={120}
+            height={32}
+          />
         </Link>
       </div>
 
