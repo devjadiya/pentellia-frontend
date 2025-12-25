@@ -98,12 +98,6 @@ export default function DashboardPage() {
                     bottom: 10,
                   }}
                 >
-                  <defs>
-                    <linearGradient id="fillVulnerabilities" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.4} />
-                      <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0.05} />
-                    </linearGradient>
-                  </defs>
                   <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsl(var(--border) / 0.5)" />
                   <XAxis
                     dataKey="date"
@@ -125,7 +119,8 @@ export default function DashboardPage() {
                   <Area
                     dataKey="vulnerabilities"
                     type="natural"
-                    fill="url(#fillVulnerabilities)"
+                    fill="hsl(var(--primary))"
+                    fillOpacity={0.4}
                     stroke="hsl(var(--primary))"
                     strokeWidth={2}
                   />
@@ -223,3 +218,5 @@ function KpiCard({ title, metric, delta, deltaType }: KpiCardProps) {
         </Card>
     );
 }
+
+    
