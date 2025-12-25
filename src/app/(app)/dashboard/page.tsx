@@ -15,27 +15,41 @@ import {
   ChartContainer,
   ChartTooltipContent,
 } from '@/components/ui/chart';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowUp, ArrowDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
 const exposureTrendData = [
-  {date: '2024-07-01', vulnerabilities: 21},
-  {date: '2024-07-02', vulnerabilities: 23},
-  {date: '2024-07-03', vulnerabilities: 22},
-  {date: '2024-07-04', vulnerabilities: 25},
-  {date: '2024-07-05', vulnerabilities: 24},
-  {date: '2024-07-06', vulnerabilities: 28},
-  {date: '2024-07-07', vulnerabilities: 26},
+  {date: '2024-07-01', vulnerabilities: 21, critical: 5, newAssets: 2, riskScore: 45},
+  {date: '2024-07-02', vulnerabilities: 23, critical: 6, newAssets: 1, riskScore: 48},
+  {date: '2024-07-03', vulnerabilities: 22, critical: 5, newAssets: 3, riskScore: 47},
+  {date: '2024-07-04', vulnerabilities: 25, critical: 7, newAssets: 0, riskScore: 51},
+  {date: '2024-07-05', vulnerabilities: 24, critical: 6, newAssets: 2, riskScore: 50},
+  {date: '2024-07-06', vulnerabilities: 28, critical: 8, newAssets: 1, riskScore: 55},
+  {date: '2024-07-07', vulnerabilities: 26, critical: 7, newAssets: 4, riskScore: 52},
 ];
 
-const exposureTrendConfig = {
+const chartConfig = {
   vulnerabilities: {
     label: 'Vulnerabilities',
     color: 'hsl(var(--primary))',
   },
+  critical: {
+    label: 'Critical Findings',
+    color: 'hsl(var(--destructive))',
+  },
+  newAssets: {
+    label: 'New Assets',
+    color: 'hsl(var(--secondary))',
+  },
+  riskScore: {
+    label: 'Risk Score',
+    color: 'hsl(var(--warning))',
+  },
 } satisfies ChartConfig;
+
 
 export default function DashboardPage() {
   return (
@@ -79,61 +93,40 @@ export default function DashboardPage() {
         />
       </div>
       
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Exposure Trend</CardTitle>
-          </CardHeader>
-          <CardContent className="h-[250px] w-full p-2">
-              <ChartContainer config={exposureTrendConfig} className="h-full w-full">
-                <AreaChart
-                  accessibilityLayer
-                  data={exposureTrendData.concat(exposureTrendData.map(d => ({...d, date: `2024-07-${parseInt(d.date.split('-')[2]) + 7}`})))}
-                  margin={{
-                    left: -20,
-                    right: 20,
-                    top: 10,
-                    bottom: 10,
-                  }}
-                >
-                  <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsl(var(--border) / 0.5)" />
-                  <XAxis
-                    dataKey="date"
-                    tickLine={false}
-                    axisLine={false}
-                    tickMargin={8}
-                    tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                  />
-                  <YAxis
-                      tickLine={false}
-                      axisLine={false}
-                      tickMargin={8}
-                      width={30}
-                    />
-                  <Tooltip
-                    cursor={{stroke: 'hsl(var(--border))', strokeWidth: 1}}
-                    content={<ChartTooltipContent indicator="dot" />}
-                  />
-                  <Area
-                    dataKey="vulnerabilities"
-                    type="natural"
-                    fill="hsl(var(--primary))"
-                    fillOpacity={0.4}
-                    stroke="hsl(var(--primary))"
-                    strokeWidth={2}
-                  />
-                </AreaChart>
-              </ChartContainer>
-          </CardContent>
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-7">
+        <Card className="lg:col-span-5">
+            <Tabs defaultValue="critical" className="h-full w-full">
+              <CardHeader className='flex-row items-center justify-between'>
+                 <CardTitle>Analytics</CardTitle>
+                 <TabsList className="grid w-auto grid-cols-4 h-9">
+                    <TabsTrigger value="vulnerabilities" className='text-xs px-2'>Vulnerabilities</TabsTrigger>
+                    <TabsTrigger value="critical" className='text-xs px-2'>Critical Findings</TabsTrigger>
+                    <TabsTrigger value="assets" className='text-xs px-2'>New Assets</TabsTrigger>
+                    <TabsTrigger value="risk" className='text-xs px-2'>Risk Score</TabsTrigger>
+                </TabsList>
+              </CardHeader>
+              <CardContent className="h-[250px] w-full p-2 pt-4">
+                <TabsContent value="vulnerabilities" className='h-full w-full m-0'>
+                    <AnalyticsChart dataKey="vulnerabilities" />
+                </TabsContent>
+                <TabsContent value="critical" className='h-full w-full m-0'>
+                    <AnalyticsChart dataKey="critical" />
+                </TabsContent>
+                <TabsContent value="assets" className='h-full w-full m-0'>
+                    <AnalyticsChart dataKey="newAssets" />
+                </TabsContent>
+                <TabsContent value="risk" className='h-full w-full m-0'>
+                    <AnalyticsChart dataKey="riskScore" />
+                </TabsContent>
+              </CardContent>
+            </Tabs>
         </Card>
         
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="lg:col-span-2 grid grid-cols-2 md:grid-cols-2 gap-4">
              <KpiCard title="Open Ports" metric="34" delta="+3" deltaType="increase" />
              <KpiCard title="Vulnerabilities" metric="43" delta="+5" deltaType="increase" />
              <KpiCard title="Services" metric="18" delta="-1" deltaType="decrease" />
              <KpiCard title="Technologies" metric="29" delta="+2" deltaType="increase" />
-             <KpiCard title="Exposed Assets" metric="2" delta="0" deltaType="neutral" />
-             <KpiCard title="New This Week" metric="7" delta="+1" deltaType="increase" />
         </div>
       </div>
 
@@ -185,6 +178,46 @@ export default function DashboardPage() {
   );
 }
 
+function AnalyticsChart({ dataKey }: { dataKey: keyof typeof chartConfig }) {
+    const color = chartConfig[dataKey].color;
+    return (
+        <ChartContainer config={chartConfig} className="h-full w-full">
+            <AreaChart
+                accessibilityLayer
+                data={exposureTrendData}
+                margin={{ left: -20, right: 20, top: 10, bottom: 10, }}
+            >
+                <defs>
+                    <linearGradient id={`${dataKey}-gradient`} x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor={color} stopOpacity={0.4} />
+                    <stop offset="95%" stopColor={color} stopOpacity={0.1} />
+                    </linearGradient>
+                </defs>
+                <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsl(var(--border) / 0.5)" />
+                <XAxis
+                    dataKey="date"
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={8}
+                    tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                />
+                <YAxis tickLine={false} axisLine={false} tickMargin={8} width={30} />
+                <Tooltip
+                    cursor={{ stroke: 'hsl(var(--border))', strokeWidth: 1 }}
+                    content={<ChartTooltipContent indicator="dot" />}
+                />
+                <Area
+                    dataKey={dataKey}
+                    type="natural"
+                    fill={`url(#${dataKey}-gradient)`}
+                    stroke={color}
+                    strokeWidth={2}
+                />
+            </AreaChart>
+        </ChartContainer>
+    )
+}
+
 type KpiCardProps = {
     title: string;
     metric: string;
@@ -216,3 +249,5 @@ function KpiCard({ title, metric, delta, deltaType }: KpiCardProps) {
         </Card>
     );
 }
+
+    
