@@ -15,7 +15,7 @@ export const POST = async (req: NextRequest) =>
 
            const user = await authService.verifyToken(token)
 
-            return new ApiResponse(true, "Token is valid", user);
+           return new ApiResponse(true, "Token is valid", user );
         }
     )
 

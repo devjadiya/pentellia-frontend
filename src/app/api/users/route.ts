@@ -43,6 +43,6 @@ export const POST = async (req: NextRequest) => apiHandler(async () => {
     // 5️⃣ Create user
     const user = await userService.createUser(userPayload);
 
-    return new ApiResponse( true , "User created" , user );
+    return new ApiResponse( true , "User created" );
     
 });

@@ -9,27 +9,33 @@ export class UserService {
 
     async createUser(data: CreateUserInput): Promise<User> {
 
-        const user = await this.userRepo.findByUid(data.uid);
+        const user = await this.userRepo.findById(data.uid);
         if (user) {
             return user;
         }
 
         return await this.userRepo.create({
-            ...data,
-        });
+            email: data.email,
+            firstName: data.firstName,
+            lastName: data.lastName , 
+            wallet : 100.00
+        }, data.uid);
     }
 
     async getUsers(): Promise<User[]> {
         return await this.userRepo.findAll();
     }
 
-    async getUserByUid(uid: string): Promise<User | null> {
-        const user = await this.userRepo.findByUid(uid);
 
+
+    async getUserById(id: string): Promise<User | null> {
+
+        const user = await this.userRepo.findById(id);
         if (!user) {
             throw new ApiError(404, "User not found")
         }
         return user;
+
     }
 
 }

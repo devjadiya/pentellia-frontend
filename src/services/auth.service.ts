@@ -1,12 +1,13 @@
 import { adminAuth } from "@/config/firebaseAdmin";
 import { User } from "@/models/user.model";
-import { UserRepository } from "@/repositories/user.repository";
 import { ApiError } from "@/utils/ApiError";
 import { cookies } from "next/headers";
+import { UserService } from "./user.service";
+import { dump } from "@/utils/dump";
 
 export class AuthService {
 
-    private userRepo = new UserRepository();
+    private userService = new UserService();
 
     async login(token: string): Promise<void> {
 
@@ -49,16 +50,14 @@ export class AuthService {
     }
 
     async verifyToken(token: string): Promise<User | null> {
-        if (!token) {
 
+        if (!token) {
             throw new ApiError(400, "Token required");
         }
         try {
 
             const decodedToken = await adminAuth.verifySessionCookie(token, true);
-
-            const user = await this.userRepo.findByUid(decodedToken.uid!);
-
+            const user = await this.userService.getUserById(decodedToken.uid!);
             return user
 
         } catch (error) {

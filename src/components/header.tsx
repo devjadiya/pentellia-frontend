@@ -13,12 +13,24 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ShieldIcon } from './icons';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useMemo } from 'react';
+import { signOut } from 'firebase/auth';
+import { auth } from '@/config/firebaseClient';
+import { useRouter } from 'next/navigation';
 
 export function Header({ toggleSidebar }: { toggleSidebar: () => void }) {
   const userAvatar = useMemo(
     () => PlaceHolderImages.find((img) => img.id === 'user-avatar'),
     []
   );
+
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    await signOut(auth);
+    await fetch('/api/logout', { method: 'POST' });
+   return router.push('/login');
+  }
+
 
   return (
     <header className="fixed top-0 left-0 right-0 z-40 flex h-16 items-center justify-between border-b border-slate-800 bg-slate-900 px-4 text-white">
@@ -90,7 +102,7 @@ export function Header({ toggleSidebar }: { toggleSidebar: () => void }) {
           <DropdownMenuContent className="w-56" align="end" forceMount>
             <DropdownMenuItem>Profile</DropdownMenuItem>
             <DropdownMenuItem>Settings</DropdownMenuItem>
-            <DropdownMenuItem>Log out</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>Log out</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

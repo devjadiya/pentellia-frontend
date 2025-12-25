@@ -21,10 +21,10 @@ export type UpdateUserInput = z.infer<typeof UpdateUserSchema>
 // Domain model (database entity)
 export interface User {
     id: string;
-    uid: string;
     firstName: string;
     lastName: string;
     email: string;
+    wallet:number;
     createdAt: Timestamp;
     updatedAt: Timestamp;
 }

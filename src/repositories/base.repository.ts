@@ -11,11 +11,10 @@ export class BaseRepository<T> {
     this.collectionRef = adminDb.collection(collectionName);
   }
 
-  async create(data: Omit<T, "id" | "createdAt" | "updatedAt">): Promise<T> {
+  async create(data: Omit<T, "id" | "createdAt" | "updatedAt"> , docId  = uuidv4 ()): Promise<T> {
     const createdAt = Timestamp.now();
     const updatedAt = Timestamp.now();
 
-    const docId = uuidv4();
 
     await this.collectionRef.doc(docId).set({ ...data, createdAt, updatedAt, id: docId });
     return {
@@ -42,6 +41,7 @@ export class BaseRepository<T> {
   async findAll(): Promise<T[]> {
     const snapshot = await this.collectionRef.get();
     return snapshot.docs.map((doc) => ({
+      id: doc.id,
       ...(doc.data() as T),
     }));
   }
@@ -49,7 +49,7 @@ export class BaseRepository<T> {
   async findById(id: string): Promise<T | null> {
     const doc = await this.collectionRef.doc(id).get();
     if (!doc.exists) return null;
-    return { ...(doc.data() as T) };
+    return { id: doc.id, ...(doc.data() as T) };
   }
 
   async delete(id: string): Promise<boolean> {

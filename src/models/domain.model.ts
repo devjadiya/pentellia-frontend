@@ -3,12 +3,12 @@ import z from "zod";
 
 export const CreateDomainSchema = z.object({
     name: z.string().min(2),
-    userId: z.string().min(1),
 })
 
 export const UpdateDomainSchema = z.object({
     verified: z.boolean().optional(),
 })
+
 
 
 // Infer TypeScript types from Zod schemas
@@ -21,7 +21,8 @@ export interface Domain {
     name: string;
     userId: string;
     verificationToken: string;
-    verified: boolean;
+    verificationHost : string ;
+    isVerified: boolean;
     createdAt: Timestamp;
     updatedAt: Timestamp;
 }

@@ -21,7 +21,8 @@ export default async function middleware(req: NextRequest) {
     },
     body: JSON.stringify({ token }),
   });
-  const { data } = await res.json();
+  const  {data}  = await res.json();
+
 
   if (!data) {
     return NextResponse.redirect(new URL('/login', req.url));

@@ -1,22 +1,21 @@
-import { CreateDomainInput, Domain } from "@/models/domain.model";
+import {  Domain } from "@/models/domain.model";
 import { DomainRepository } from "@/repositories/domain.repository";
 import { ApiError } from "@/utils/ApiError";
 import crypto from "crypto";
-
-//TODO add userId from verified uidToken not from user input
-
+import { DnsService } from "./dns.service";
 
 //TODO add domain verification process
+
 export class DomainService {
-    private domainRepo: DomainRepository = new DomainRepository();
+    private domainRepo = new DomainRepository();
+
+    private dnsService = new DnsService();
+
 
     async generateVerificationToken(): Promise<string> {
         return crypto.randomBytes(16).toString("hex");
     }
 
-    async getDomainsForUser(userId: string): Promise<Domain[]> {
-        return this.domainRepo.findByUserId(userId);
-    }
 
     normalizeDomain(input: string): string {
         return input
@@ -27,20 +26,59 @@ export class DomainService {
             .replace(/\/.*$/, "");
     }
 
-    async createDomain(data: CreateDomainInput): Promise<Domain> {
+    async getDomainsForUser(userId: string): Promise<Domain[]> {
 
-        const domain = this.normalizeDomain(data.name);
-        const exists = await this.domainRepo.findUserAndDomainExists(data.userId, domain);
+        return this.domainRepo.findByUserId(userId);
+    }
 
-        if (exists) {
-            throw new ApiError(400,"Domain already exists for this user");
+    async getSingleDomainForUser(userId: string, domainId: string): Promise<Domain | null> {
+
+        const domainDoc = await this.domainRepo.findByUserAndDomainId(userId, domainId);
+
+        if (!domainDoc) {
+            throw new ApiError(400, "Domain does not exists for this user");
+        }
+
+        return domainDoc
+
+    }
+
+    async verifyDomain( userId: string , domainId: string) {
+        const domain = await this.domainRepo.findByUserAndDomainId(userId, domainId);
+        if (!domain) throw new ApiError(404, "Domain not found");
+
+
+        const isValid = await this.dnsService.verifyTxt(
+            domain.verificationHost,
+            domain.verificationToken
+        );
+
+        if (!isValid) {
+            throw new ApiError(400, "TXT record not found");
+        }
+
+        await this.domainRepo.update(domainId, { isVerified: true });
+
+    }
+
+
+
+    async createDomain(name: string, userId: string): Promise<Domain> {
+
+        const domain = this.normalizeDomain(name);
+
+        const domainDoc = await this.domainRepo.findByUserAndDomainName(userId, domain);
+
+        if (domainDoc) {
+            throw new ApiError(400, "Domain already exists for this user");
         }
 
         return this.domainRepo.create({
-            ...data,
             name: domain,
+            userId: userId,
             verificationToken: await this.generateVerificationToken(),
-            verified: false,
+            verificationHost : `_pentellia.${domain}`,
+            isVerified: false,
         });
 
     }

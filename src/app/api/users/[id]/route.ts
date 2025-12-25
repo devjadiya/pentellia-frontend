@@ -8,12 +8,12 @@ const userService = new UserService();
 // GET /api/users/:id - Fetch single user
 export const  GET = async (
   request: NextRequest,
-  { params }: { params: Promise<{ uid: string }> }
+  { params }: { params: Promise<{ id: string }> }
 ) => apiHandler(
   async () => {
-    const { uid } = await params;
+    const { id } = await params;
    
-    const user = await userService.getUserByUid(uid)
+    const user = await userService.getUserById(id)
 
     return new ApiResponse(true,"User Found",user)
 

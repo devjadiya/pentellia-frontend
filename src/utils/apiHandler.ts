@@ -20,6 +20,7 @@ export async function apiHandler<T>(handler: ApiHandler<T>) {
                 success: false,
                 message,
                 errors: err.errors ?? null,
+                data: null,
             },
             { status: statusCode }
         );

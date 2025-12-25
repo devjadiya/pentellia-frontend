@@ -13,19 +13,40 @@ export class DomainRepository extends BaseRepository<Domain> {
 
         return snap.docs.map(d => ({
             ...(d.data() as Domain),
-            id: d.id,
         }));
     }
 
-    async findUserAndDomainExists(userId: string, domainName: string): Promise<boolean> {
+    async findByUserAndDomainId(userId: string, domainId: string): Promise<Domain | null> {
+        const snap = await this.collectionRef
+            .where("userId", "==", userId)
+            .where("id", "==", domainId)
+            .limit(1)
+            .get();
+
+        if (snap.empty) return null;
+
+        const doc = snap.docs[0]
+
+        return {
+            ...doc.data() as Domain
+        }
+
+    }
+
+
+    async findByUserAndDomainName(userId: string, domainName: string): Promise<Domain | null> {
         const snap = await this.collectionRef
             .where("userId", "==", userId)
             .where("name", "==", domainName)
             .limit(1)
             .get();
 
-        if (snap.empty) return false;
+        if (snap.empty) return null;
 
-        return true
+        const doc = snap.docs[0]
+
+        return {
+            ...doc.data() as Domain
+        }
     }
 }   
