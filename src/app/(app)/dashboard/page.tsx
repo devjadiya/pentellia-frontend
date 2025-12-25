@@ -66,9 +66,9 @@ const findingsTrendData = [
 ];
 
 const assetRiskData = [
-    { risk: 'high', assets: 15, fill: 'var(--color-high)' },
-    { risk: 'medium', assets: 45, fill: 'var(--color-medium)' },
-    { risk: 'low', assets: 120, fill: 'var(--color-low)' },
+    { risk: 'high', assets: 15, fill: 'var(--color-critical)' },
+    { risk: 'medium', assets: 45, fill: 'var(--color-high)' },
+    { risk: 'low', assets: 120, fill: 'var(--color-secondary)' },
 ]
 
 const vulnerabilityAgeData = [
@@ -124,7 +124,7 @@ export default function DashboardPage() {
                 <StatusIndicator label="Last Scan" value="2h ago" status="ok" Icon={Clock}/>
                 <StatusIndicator label="SLA Health" value="At Risk" status="danger" />
                 <StatusIndicator label="NIST CSF Alignment" value="Partial" status="warning" />
-                <div className="flex flex-col gap-1 p-2 rounded-lg bg-card border-none">
+                <div className="flex flex-col gap-1 p-2 rounded-lg bg-card border">
                     <p className="text-xs font-medium text-muted-foreground">Control Coverage Trend</p>
                     <div className="h-[40px]">
                         <ChartContainer config={chartConfig} className="w-full h-full">
@@ -317,7 +317,7 @@ function AnalyticsChart({ dataKey }: { dataKey: keyof typeof chartConfig }) {
                     dataKey={dataKey}
                     type="natural"
                     fill={color}
-                    fillOpacity={0.4}
+                    fillOpacity={0.1}
                     stroke={color}
                     strokeWidth={2}
                 />
@@ -349,7 +349,7 @@ function KpiCard({ title, metric, delta, deltaType, invertDeltaColor = false }: 
     const DeltaIcon = isIncrease ? ArrowUp : ArrowDown;
 
     return (
-        <div className='flex flex-col justify-between p-3 rounded-lg bg-card/50'>
+        <div className='flex flex-col justify-between p-3 rounded-lg bg-card/50 border'>
             <div className="flex items-center justify-between pb-1">
                 <span className="text-xs font-medium text-muted-foreground whitespace-nowrap">{title}</span>
                  {deltaType !== "neutral" && (
@@ -379,7 +379,7 @@ function StatusIndicator({ label, value, status, Icon }: StatusIndicatorProps) {
     };
 
     return (
-        <div className="flex flex-col gap-1 p-2 rounded-lg bg-card border-none">
+        <div className="flex flex-col gap-1 p-2 rounded-lg bg-card border">
             <p className="text-xs font-medium text-muted-foreground">{label}</p>
             <div className="flex items-center gap-2">
                 <span className={cn('h-2 w-2 rounded-full', statusColor[status])} />
