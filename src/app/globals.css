@@ -6,17 +6,17 @@
 @layer base {
   :root {
     --background: 224 71% 4%; /* #0B0F1A */
-    --foreground: 210 40% 96.1%;
+    --foreground: 220 13% 91%; /* #E6E8EB */
     --card: 224 43% 9%; /* #121826 */
-    --card-foreground: 210 40% 96.1%;
+    --card-foreground: 220 13% 91%;
     --popover: 224 71% 4%;
-    --popover-foreground: 210 40% 96.1%;
+    --popover-foreground: 220 13% 91%;
     --primary: 243 80% 65%; /* Controlled Purple */
     --primary-foreground: 210 40% 98%;
     --secondary: 215 89% 60%; /* Subtle Blue */
     --secondary-foreground: 222.2 47.4% 11.2%;
     --muted: 217 33% 17%; /* Muted Indigo/Graphite */
-    --muted-foreground: 215 20% 65%;
+    --muted-foreground: 222 12% 73%; /* #B1B6C1 */
     --accent: 217 33% 17%;
     --accent-foreground: 210 40% 98%;
     --destructive: 0 74% 50%; /* Calmer Red */
@@ -42,17 +42,17 @@
 
   .dark {
     --background: 224 71% 4%;
-    --foreground: 210 40% 96.1%;
+    --foreground: 220 13% 91%;
     --card: 224 43% 9%;
-    --card-foreground: 210 40% 96.1%;
+    --card-foreground: 220 13% 91%;
     --popover: 224 71% 4%;
-    --popover-foreground: 210 40% 96.1%;
+    --popover-foreground: 220 13% 91%;
     --primary: 243 80% 65%;
     --primary-foreground: 210 40% 98%;
     --secondary: 215 89% 60%;
     --secondary-foreground: 222.2 47.4% 11.2%;
     --muted: 217 33% 17%;
-    --muted-foreground: 215 20% 65%;
+    --muted-foreground: 222 12% 73%;
     --accent: 217 33% 17%;
     --accent-foreground: 210 40% 98%;
     --destructive: 0 74% 50%;
