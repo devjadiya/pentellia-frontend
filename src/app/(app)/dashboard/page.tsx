@@ -336,7 +336,6 @@ type KpiCardProps = {
 
 function KpiCard({ title, metric, delta, deltaType, invertDeltaColor = false }: KpiCardProps) {
     const isIncrease = deltaType === 'increase';
-    const isDecrease = deltaType === 'decrease';
     
     let colorClass = 'text-muted-foreground';
     if (deltaType !== 'neutral') {
@@ -347,13 +346,13 @@ function KpiCard({ title, metric, delta, deltaType, invertDeltaColor = false }: 
         }
     }
 
-    const DeltaIcon = isIncrease ? ArrowUp : isDecrease ? ArrowDown : null;
+    const DeltaIcon = isIncrease ? ArrowUp : ArrowDown;
 
     return (
         <div className='flex flex-col justify-between p-3 rounded-lg bg-card/50'>
             <div className="flex items-center justify-between pb-1">
                 <span className="text-xs font-medium text-muted-foreground whitespace-nowrap">{title}</span>
-                 {delta !== "0" && DeltaIcon && (
+                 {deltaType !== "neutral" && (
                     <div className={cn("flex items-center gap-1 text-xs", colorClass)}>
                         <DeltaIcon className="h-3 w-3" />
                         <span>{delta.replace(/[+-]/g, '')}</span>
@@ -390,5 +389,7 @@ function StatusIndicator({ label, value, status, Icon }: StatusIndicatorProps) {
         </div>
     );
 }
+
+    
 
     
