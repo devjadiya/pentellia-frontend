@@ -64,39 +64,20 @@ export default function DashboardPage() {
     <div className="flex-1 space-y-8 p-4 pt-6 md:p-8">
       {/* Top section title */}
       <div>
-        <h1 className="text-2xl font-semibold text-foreground">Dashboard</h1>
+        <h1 className="text-2xl font-semibold text-foreground">Security Posture Snapshot</h1>
         <p className="text-muted-foreground">
-          Overview of your security posture.
+          A high-level overview of your organization's attack surface and risk exposure.
         </p>
       </div>
 
-      {/* Attack surface summary */}
-      <section>
-        <h2 className="text-lg font-semibold text-foreground mb-4">
-          Attack Surface Summary
-        </h2>
-        <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4 xl:grid-cols-6">
-          <SummaryCard label="IP ADDRESS" value="1" />
-          <SummaryCard label="HOSTNAME" value="1" />
-          <SummaryCard label="PORT" value="1" />
-          <SummaryCard label="PROTOCOL" value="1" />
-          <SummaryCard label="SERVICES" value="0" />
-          <SummaryCard label="TECHNOLOGIES" value="9" />
-        </div>
-      </section>
-
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-7 lg:gap-8">
-        {/* Vulnerability Summary Chart */}
-        <div className="lg:col-span-4 bg-card rounded-lg shadow-soft border border-border">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 lg:gap-8">
+        {/* Exposure Trend Chart */}
+        <div className="lg:col-span-3 xl:col-span-3 bg-card rounded-lg shadow-soft border border-border">
             <div className="flex items-center justify-between p-4 md:p-6 border-b border-border">
               <div className='flex items-center gap-4 h-8'>
                 <h2 className="text-lg font-semibold text-foreground">
-                  Vulnerability Summary
+                  Exposure Trend
                 </h2>
-                <span className="inline-flex items-center gap-1.5 rounded-md bg-secondary/10 px-2 py-0.5 text-[10px] font-medium tracking-wider text-secondary border border-secondary/20">
-                  <Bot className="h-3 w-3" />
-                  AI INSIGHT
-                </span>
               </div>
               <span className="text-xs text-muted-foreground">
                 Last 14 days
@@ -180,30 +161,56 @@ export default function DashboardPage() {
                   stroke="hsl(var(--chart-1))"
                   stackId="a"
                 />
+                 <Area
+                  dataKey="high"
+                  type="natural"
+                  fill="hsl(var(--chart-3))"
+                  fillOpacity={0.3}
+                  stroke="hsl(var(--chart-3))"
+                  stackId="a"
+                />
+                <Area
+                  dataKey="critical"
+                  type="natural"
+                  fill="hsl(var(--chart-4))"
+                  fillOpacity={0.3}
+                  stroke="hsl(var(--chart-4))"
+                  stackId="a"
+                />
                 <Legend content={<ChartLegendContent />} />
               </AreaChart>
             </ChartContainer>
             </div>
         </div>
-
-        {/* Scan activity & AI Insight */}
-        <div className="lg:col-span-3 space-y-8">
-            <AiInsightCard />
-            <div>
-              <div className="flex items-center justify-between mb-4 h-8">
-                <h2 className="text-lg font-semibold text-foreground">
-                  Scan Activity
-                </h2>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-8">
+        
+        {/* Active Risk Signals */}
+        <div className="lg:col-span-1 xl:col-span-1 space-y-8">
+            <h2 className="text-lg font-semibold text-foreground">
+                Active Risk Signals
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4 lg:gap-8">
                 <ActivityCard title="Running scans" value="0" />
                 <ActivityCard title="Waiting scans" value="0" />
                 <ActivityCard title="Scanned assets" value="0" />
-                <ActivityCard title="Added assets" value="1" />
-              </div>
+                <ActivityCard title="New assets" value="1" />
             </div>
         </div>
       </div>
+      
+      {/* Attack surface summary */}
+      <section>
+        <h2 className="text-lg font-semibold text-foreground mb-4">
+          Attack Surface Summary
+        </h2>
+        <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4 xl:grid-cols-6">
+          <SummaryCard label="IP ADDRESS" value="1" />
+          <SummaryCard label="HOSTNAME" value="1" />
+          <SummaryCard label="PORT" value="1" />
+          <SummaryCard label="PROTOCOL" value="1" />
+          <SummaryCard label="SERVICES" value="0" />
+          <SummaryCard label="TECHNOLOGIES" value="9" />
+        </div>
+      </section>
 
       {/* Latest scans table */}
       <section>
@@ -212,7 +219,7 @@ export default function DashboardPage() {
             Latest Scans
           </h2>
           <button className="text-sm text-primary hover:underline">
-            View scans
+            View all scans
           </button>
         </div>
 
@@ -294,25 +301,4 @@ function ActivityCard({title, value}: ActivityCardProps) {
       </div>
     </div>
   );
-}
-
-function AiInsightCard() {
-    return (
-        <div className="relative rounded-lg bg-card p-4 md:p-6 shadow-soft overflow-hidden border border-border">
-            <div className="absolute inset-0 animate-pulse-slow">
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-secondary/20 to-primary/20 animate-gradient-x" />
-            </div>
-            <div className="relative z-10 flex items-start gap-4">
-                <div className="flex-shrink-0 rounded-full bg-primary/10 p-2 border border-primary/20">
-                    <Bot className="h-5 w-5 text-primary" />
-                </div>
-                <div className="flex-1">
-                    <h3 className="font-semibold text-foreground">Potential Risk Cluster Detected</h3>
-                    <p className="text-sm text-muted-foreground mt-1">
-                        AI analysis has identified a group of assets with overlapping vulnerabilities. Review recommended actions.
-                    </p>
-                </div>
-            </div>
-        </div>
-    )
 }
