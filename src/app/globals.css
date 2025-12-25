@@ -7,7 +7,7 @@
   :root {
     --background: 224 71% 4%; /* #0B0F1A */
     --foreground: 210 40% 96.1%;
-    --card: 224 43% 15%; /* #161E2E */
+    --card: 224 43% 9%; /* #121826 */
     --card-foreground: 210 40% 96.1%;
     --popover: 224 71% 4%;
     --popover-foreground: 210 40% 96.1%;
@@ -37,7 +37,7 @@
   .dark {
     --background: 224 71% 4%; /* #0B0F1A */
     --foreground: 210 40% 96.1%;
-    --card: 224 43% 15%; /* #161E2E */
+    --card: 224 43% 9%; /* #121826 */
     --card-foreground: 210 40% 96.1%;
     --popover: 224 71% 4%;
     --popover-foreground: 210 40% 96.1%;

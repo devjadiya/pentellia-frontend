@@ -5,11 +5,11 @@ import {
   Area,
   AreaChart,
   CartesianGrid,
-  Legend,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
+  Legend
 } from 'recharts';
 import type {ChartConfig} from '@/components/ui/chart';
 import {
@@ -164,7 +164,6 @@ export default function DashboardPage() {
                   cursor={{stroke: 'hsl(var(--border))', strokeWidth: 2}}
                   content={<ChartTooltipContent indicator="dot" />}
                 />
-                <Legend content={<ChartLegendContent />} />
                 <Area
                   dataKey="medium"
                   type="natural"
@@ -181,6 +180,7 @@ export default function DashboardPage() {
                   stroke="hsl(var(--chart-1))"
                   stackId="a"
                 />
+                <Legend content={<ChartLegendContent />} />
               </AreaChart>
             </ChartContainer>
             </div>
@@ -298,7 +298,7 @@ function ActivityCard({title, value}: ActivityCardProps) {
 
 function AiInsightCard() {
     return (
-        <div className="relative rounded-lg bg-card p-4 md:p-6 shadow-soft overflow-hidden">
+        <div className="relative rounded-lg bg-card p-4 md:p-6 shadow-soft overflow-hidden border border-border">
             <div className="absolute inset-0 animate-pulse-slow">
                 <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-secondary/20 to-primary/20 animate-gradient-x" />
             </div>
