@@ -61,9 +61,9 @@ const chartConfig = {
 
 export default function DashboardPage() {
   return (
-    <div className="flex-1 space-y-4 p-4 pt-6 md:p-8">
+    <div className="flex-1 space-y-8 p-4 pt-6 md:p-8">
       {/* Top section title */}
-      <div className="mb-8">
+      <div>
         <h1 className="text-2xl font-semibold text-foreground">Dashboard</h1>
         <p className="text-muted-foreground">
           Overview of your security posture.
@@ -71,7 +71,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Attack surface summary */}
-      <section className="mb-8">
+      <section>
         <h2 className="text-lg font-semibold text-foreground mb-4">
           Attack Surface Summary
         </h2>
@@ -88,8 +88,8 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-7 lg:gap-8">
         {/* Vulnerability Summary Chart */}
         <div className="lg:col-span-4 bg-card rounded-lg shadow-soft border border-border">
-            <div className="flex items-center justify-between p-4 border-b border-border">
-              <div className='flex items-center gap-4'>
+            <div className="flex items-center justify-between p-4 md:p-6 border-b border-border">
+              <div className='flex items-center gap-4 h-8'>
                 <h2 className="text-lg font-semibold text-foreground">
                   Vulnerability Summary
                 </h2>
@@ -206,7 +206,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Latest scans table */}
-      <section className="pt-8">
+      <section>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-foreground">
             Latest Scans
@@ -287,7 +287,7 @@ type ActivityCardProps = {
 
 function ActivityCard({title, value}: ActivityCardProps) {
   return (
-    <div className="bg-card rounded-lg shadow-soft border border-border p-4 flex flex-col h-full">
+    <div className="bg-card rounded-lg shadow-soft border border-border p-4 md:p-6 flex flex-col h-full">
       <span className="text-sm text-muted-foreground mb-2">{title}</span>
       <div className="flex items-baseline gap-2 mt-auto">
         <span className="text-3xl font-medium text-foreground">{value}</span>
@@ -298,7 +298,7 @@ function ActivityCard({title, value}: ActivityCardProps) {
 
 function AiInsightCard() {
     return (
-        <div className="relative rounded-lg bg-card p-4 shadow-soft overflow-hidden">
+        <div className="relative rounded-lg bg-card p-4 md:p-6 shadow-soft overflow-hidden">
             <div className="absolute inset-0 animate-pulse-slow">
                 <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-secondary/20 to-primary/20 animate-gradient-x" />
             </div>
