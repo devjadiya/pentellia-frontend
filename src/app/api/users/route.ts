@@ -1,48 +1,68 @@
-import { validateInput } from '@/utils/validateInput';
-import { CreateUserInput, CreateUserSchema } from '@/models/user.model';
-import { apiHandler } from '@/utils/apiHandler';
-import { UserService } from '@/services/user.service';
-import { NextRequest } from 'next/server';
-import { adminAuth } from '@/config/firebaseAdmin';
-import { ApiError } from '@/utils/ApiError';
-import { ApiResponse } from '@/utils/ApiResponse';
+// src/app/api/profile/route.ts (or wherever this file is)
+import { NextRequest, NextResponse } from "next/server";
+import { query } from "@/config/db";
+import { adminAuth } from "@/config/firebaseAdmin";
+import { cookies } from "next/headers";
 
-const userService = new UserService();
+async function getUid() {
+  const cookieStore = await cookies();
+  const sessionCookie = cookieStore.get("__session")?.value;
+  if (!sessionCookie) return null;
+  try {
+    // PERFORMANCE FIX: Set checkRevoked to false.
+    // This removes the external network call to Firebase on every request.
+    const decoded = await adminAuth.verifySessionCookie(sessionCookie, false);
+    return decoded.uid;
+  } catch (e) {
+    return null;
+  }
+}
 
-const verifyFirebaseToken = async (req: NextRequest) => {
-    const authHeader = req.headers.get("authorization");
+export async function GET(req: NextRequest) {
+  const start = Date.now(); // Debug timing
+  const uid = await getUid();
 
-    if (!authHeader?.startsWith("Bearer ")) {
-        throw new ApiError(401, "Unauthorized");
+  if (!uid)
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  try {
+    // PERFORMANCE FIX: Do NOT select 'avatar' here.
+    // Fetching binary blobs converts 50ms queries into 2000ms queries.
+    const text = `
+      SELECT first_name, last_name, email, company, size, role, country, timezone, verified_domain
+      FROM users WHERE uid = $1
+    `;
+    const res = await query(text, [uid]);
+
+    if (res.rows.length === 0) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    const token = authHeader.split(" ")[1];
-    const decoded = await adminAuth.verifyIdToken(token);
+    const u = res.rows[0];
 
-    return decoded;
-};
+    // NOTE: If you really need the avatar, create a separate API route: /api/user/avatar
+    // Or prefer using a cloud storage URL (S3/Firebase) instead of binary in DB.
 
-
-// POST /api/users - Create user
-export const POST = async (req: NextRequest) => apiHandler(async () => {
-    // 1️⃣ Verify Firebase token
-    const decoded = await verifyFirebaseToken(req);
-
-    // 2️⃣ Validate ONLY non-sensitive fields
-    const body = await req.json();
-    const data = validateInput(CreateUserSchema.omit({ uid: true, email: true }), body);
-
-    // 3️⃣ Build trusted payload
-    const userPayload: CreateUserInput = {
-        uid: decoded.uid,
-        email: decoded.email!,
-        firstName: data.firstName,
-        lastName: data.lastName,
+    const userData = {
+      firstName: u.first_name || "",
+      lastName: u.last_name || "",
+      email: u.email || "",
+      // avatar: "/api/user/avatar", // <--- Load this lazily via <img> tag
+      company: u.company || "",
+      size: u.size || "",
+      role: u.role || "",
+      country: u.country || "",
+      timezone: u.timezone || "",
+      verifiedDomain: u.verified_domain || "",
     };
 
-    // 5️⃣ Create user
-    const user = await userService.createUser(userPayload);
-
-    return new ApiResponse( true , "User created" );
-    
-});
+    console.log(`Profile fetch took: ${Date.now() - start}ms`);
+    return NextResponse.json({ success: true, user: userData });
+  } catch (error) {
+    console.error("Fetch Profile Error:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
+  }
+}

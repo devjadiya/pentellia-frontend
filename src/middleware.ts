@@ -1,47 +1,31 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 
-const allowedPaths = ['/login', '/signup'];
+// Routes that require authentication
+const protectedRoutes = ["/dashboard", "/account"];
+// Routes meant only for guests (redirect to dashboard if logged in)
+const authRoutes = ["/login", "/signup"];
 
-export default async function middleware(req: NextRequest) {
+export default function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
+  const sessionCookie = req.cookies.get("__session")?.value;
 
-  const APP_URL = req.nextUrl.origin;
-
-
-  if (allowedPaths.includes(pathname)) {
-    return NextResponse.next();
+  // 1. Protect Dashboard Routes
+  if (protectedRoutes.some((route) => pathname.startsWith(route))) {
+    if (!sessionCookie) {
+      return NextResponse.redirect(new URL("/login", req.url));
+    }
   }
 
-  const token = req.cookies.get('__session')?.value;
-
-  const res = await fetch(`${APP_URL}/api/verify`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ token }),
-  });
-  const  {data}  = await res.json();
-
-
-  if (!data) {
-    return NextResponse.redirect(new URL('/login', req.url));
+  // 2. Redirect logged-in users away from Login/Signup
+  if (authRoutes.includes(pathname)) {
+    if (sessionCookie) {
+      return NextResponse.redirect(new URL("/dashboard", req.url));
+    }
   }
 
   return NextResponse.next();
 }
 
-
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
-   
-  ],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };
