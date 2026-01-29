@@ -1,1 +1,1 @@
-Pentellia - Next Gen AI dashbaord
+Pentellia - Next Gen AI dashbaord made under Encoderspro
