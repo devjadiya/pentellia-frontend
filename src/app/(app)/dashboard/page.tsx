@@ -1,393 +1,594 @@
+"use client";
 
-'use client';
-
+import React, { useEffect, useState } from "react";
 import {
   Area,
   AreaChart,
   Bar,
   BarChart,
   CartesianGrid,
-  Legend,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
-} from 'recharts';
-import type {ChartConfig} from '@/components/ui/chart';
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  RadialBarChart,
+  RadialBar,
+  Legend,
+  ComposedChart,
+  Line,
+} from "recharts";
+import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
 import {
-  ChartContainer,
-  ChartTooltipContent,
-  ChartLegend,
-  ChartLegendContent,
-} from '@/components/ui/chart';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowUp, ArrowDown, CalendarDays, Filter, Workflow, Clock } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
+  Workflow,
+  Clock,
+  ShieldAlert,
+  Activity,
+  ArrowUp,
+  ArrowDown,
+  ScanLine,
+  Target,
+  LayoutTemplate,
+  BarChart3,
+  LineChart,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
+import Link from "next/link";
 
-const exposureTrendData = [
-  {date: '2024-07-01', vulnerabilities: 21, critical: 5, newAssets: 2, riskScore: 45},
-  {date: '2024-07-02', vulnerabilities: 23, critical: 6, newAssets: 1, riskScore: 48},
-  {date: '2024-07-03', vulnerabilities: 22, critical: 5, newAssets: 3, riskScore: 47},
-  {date: '2024-07-04', vulnerabilities: 25, critical: 7, newAssets: 0, riskScore: 51},
-  {date: '2024-07-05', vulnerabilities: 24, critical: 6, newAssets: 2, riskScore: 50},
-  {date: '2024-07-06', vulnerabilities: 28, critical: 8, newAssets: 1, riskScore: 55},
-  {date: '2024-07-07', vulnerabilities: 26, critical: 7, newAssets: 4, riskScore: 52},
-];
+// --- Types ---
+interface DashboardData {
+  kpi: {
+    totalAssets: number;
+    totalScans: number;
+    activeScans: number;
+    failedScans24h: number;
+    openCritical: number;
+    openHigh: number;
+  };
+  charts: {
+    exposureTrend: { date: string; scans: number }[];
+    findingsTrend: any[];
+  };
+  recentScans: any[];
+}
 
-const complianceTrendData = [
-  { month: "Jan", coverage: 75 },
-  { month: "Feb", coverage: 78 },
-  { month: "Mar", coverage: 82 },
-  { month: "Apr", coverage: 80 },
-  { month: "May", coverage: 85 },
-  { month: "Jun", coverage: 88 },
-];
+// --- Chart Configurations ---
+const trendConfig = {
+  scans: { label: "Scans Performed", color: "#8b5cf6" }, // Violet
+  line: { label: "Trend Line", color: "#10b981" }, // Emerald
+};
 
-
-const chartConfig = {
-  vulnerabilities: { label: 'Vulnerabilities', color: 'hsl(var(--secondary))' },
-  critical: { label: 'Critical', color: 'hsl(var(--destructive))' },
-  high: { label: 'High', color: 'hsl(var(--warning))' },
-  medium: { label: 'Medium', color: 'hsl(var(--chart-3))' },
-  low: { label: 'Low', color: 'hsl(var(--muted-foreground))' },
-  newAssets: { label: 'New Assets', color: 'hsl(var(--primary))' },
-  riskScore: { label: 'Risk Score', color: 'hsl(var(--warning))' },
-  coverage: { label: 'Coverage', color: 'hsl(var(--primary))' },
-  count: { label: 'Count' },
-} satisfies ChartConfig;
-
-const findingsTrendData = [
-    { period: 'Previous 7 Days', critical: 12, high: 34 },
-    { period: 'Last 24 Hours', critical: 8, high: 21 },
-];
-
-const assetRiskData = [
-    { risk: 'high', assets: 15, fill: 'var(--color-critical)' },
-    { risk: 'medium', assets: 45, fill: 'var(--color-high)' },
-    { risk: 'low', assets: 120, fill: 'var(--color-secondary)' },
-]
-
-const vulnerabilityAgeData = [
-    { age: '> 30d', count: 18 },
-    { age: '> 60d', count: 9 },
-    { age: '> 90d', count: 3 },
-]
+const radialConfig = {
+  completed: { label: "Success", color: "#10b981" }, // Emerald
+  failed: { label: "Failed", color: "#ef4444" }, // Red
+  active: { label: "Active", color: "#3b82f6" }, // Blue
+};
 
 export default function DashboardPage() {
+  const [data, setData] = useState<DashboardData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // View State for Chart Toggles
+  const [chartView, setChartView] = useState<"area" | "bar" | "composed">(
+    "area"
+  );
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch("/api/dashboard/stats");
+        const json = await res.json();
+        if (json.success) setData(json);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  if (loading || !data) {
+    return <DashboardSkeleton />;
+  }
+
+  // Derived Data for Visuals
+  const totalOps = data.kpi.totalScans || 1;
+  const radialData = [
+    {
+      name: "Success",
+      count: totalOps - data.kpi.failedScans24h - data.kpi.activeScans,
+      fill: "#10b981",
+    },
+    { name: "Active", count: data.kpi.activeScans, fill: "#3b82f6" },
+    { name: "Failed", count: data.kpi.failedScans24h, fill: "#ef4444" },
+  ];
+
   return (
-    <div className="flex-1 space-y-4 p-4 pt-6 md:p-8">
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
-        <div className="lg:col-span-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Card className='h-full'>
-              <CardHeader className='p-3'>
-                <CardTitle className='text-sm font-semibold'>Exposure KPIs</CardTitle>
-              </CardHeader>
-              <CardContent className="grid grid-cols-1 gap-3 p-3 pt-0">
-                 <KpiCard title="Open Critical" metric="8" delta="+2" deltaType="increase" />
-                 <KpiCard title="Vulnerabilities" metric="43" delta="+5" deltaType="increase" />
-                 <KpiCard title="Open Ports" metric="34" delta="+3" deltaType="increase" />
-              </CardContent>
-            </Card>
-            <Card className='h-full'>
-              <CardHeader className='p-3'>
-                <CardTitle className='text-sm font-semibold'>Asset KPIs</CardTitle>
-              </CardHeader>
-              <CardContent className="grid grid-cols-1 gap-3 p-3 pt-0">
-                  <KpiCard title="IP Addresses" metric="12" delta="+1" deltaType="increase" />
-                  <KpiCard title="Hostnames" metric="31" delta="+3" deltaType="increase" />
-                  <KpiCard title="Technologies" metric="29" delta="+2" deltaType="increase" />
-              </CardContent>
-            </Card>
-            <Card className='h-full'>
-              <CardHeader className='p-3'>
-                <CardTitle className='text-sm font-semibold'>Operational KPIs</CardTitle>
-              </CardHeader>
-              <CardContent className="grid grid-cols-1 gap-3 p-3 pt-0">
-                  <KpiCard title="Scans Failed (24h)" metric="1" delta="+1" deltaType="increase" />
-                  <KpiCard title="Scan Freshness" metric="3d" delta="-1d" deltaType="decrease" invertDeltaColor/>
-                  <KpiCard title="New Assets (7d)" metric="20" delta="+5" deltaType="increase" />
-              </CardContent>
-            </Card>
-        </div>
-      
-        <Card className='lg:col-span-6 h-full'>
-            <CardHeader className='p-3 pb-2'>
-                <CardTitle className='text-sm font-semibold'>Security Posture &amp; Trust Signals</CardTitle>
-            </CardHeader>
-            <CardContent className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-3 p-3 pt-0">
-                <StatusIndicator label="Operational Status" value="Live" status="ok" />
-                <StatusIndicator label="Detection Pipeline" value="Operational" status="ok" Icon={Workflow} />
-                <StatusIndicator label="Last Scan" value="2h ago" status="ok" Icon={Clock}/>
-                <StatusIndicator label="SLA Health" value="At Risk" status="danger" />
-                <StatusIndicator label="NIST CSF Alignment" value="Partial" status="warning" />
-                <div className="flex flex-col gap-1 p-2 rounded-lg bg-card border">
-                    <p className="text-xs font-medium text-muted-foreground">Control Coverage Trend</p>
-                    <div className="h-[40px]">
-                        <ChartContainer config={chartConfig} className="w-full h-full">
-                            <AreaChart accessibilityLayer data={complianceTrendData} margin={{ top: 5, right: 0, left: 0, bottom: 0 }}>
-                                <defs>
-                                    <linearGradient id="fillCoverage" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.4} />
-                                    <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
-                                    </linearGradient>
-                                </defs>
-                                <Tooltip
-                                    cursor={false}
-                                    content={<ChartTooltipContent indicator="dot" hideLabel />}
-                                />
-                                <Area dataKey="coverage" type="natural" fill="url(#fillCoverage)" stroke="hsl(var(--primary))" stackId="a" />
-                            </AreaChart>
-                        </ChartContainer>
-                    </div>
-                </div>
-            </CardContent>
-        </Card>
+    <div className="flex-1 space-y-4 overflow-y-auto p-2">
+      {/* 1. KEY METRICS ROW */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <KpiCard
+          title="Total Scans"
+          metric={data.kpi.totalScans.toString()}
+          icon={ScanLine}
+          trend="+12%"
+          trendType="up"
+        />
+        <KpiCard
+          title="Assets Monitored"
+          metric={data.kpi.totalAssets.toString()}
+          icon={Target}
+          trend="+3"
+          trendType="up"
+        />
+        <KpiCard
+          title="Critical Findings"
+          metric="0"
+          icon={ShieldAlert}
+          alert
+          trend="0%"
+          trendType="neutral"
+        />
+        <KpiCard
+          title="System Health"
+          metric="98%"
+          icon={Activity}
+          trend="Stable"
+          trendType="neutral"
+        />
       </div>
 
-
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
-        <Card className="lg:col-span-7 h-full">
-            <Tabs defaultValue="vulnerabilities" className="h-full w-full flex flex-col">
-              <CardHeader className='flex-row items-center justify-between p-3'>
-                 <div className='flex flex-col gap-1.5'>
-                    <CardTitle className='text-sm font-semibold'>Analytics</CardTitle>
-                 </div>
-                 <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm" className='h-8 text-xs'>
-                        <CalendarDays className="mr-2 h-4 w-4" />
-                        Time Range
-                    </Button>
-                    <Button variant="outline" size="sm" className='h-8 text-xs'>
-                        <Filter className="mr-2 h-4 w-4" />
-                        Asset Scope
-                    </Button>
-                    <TabsList className="grid w-auto grid-cols-4 h-9">
-                        <TabsTrigger value="vulnerabilities" className='text-xs px-2'>Vulnerabilities</TabsTrigger>
-                        <TabsTrigger value="critical" className='text-xs px-2'>Critical</TabsTrigger>
-                        <TabsTrigger value="assets" className='text-xs px-2'>New Assets</TabsTrigger>
-                        <TabsTrigger value="risk" className='text-xs px-2'>Risk Score</TabsTrigger>
-                    </TabsList>
-                 </div>
-              </CardHeader>
-              <CardContent className="flex-1 w-full p-2 pt-0">
-                <TabsContent value="vulnerabilities" className='h-full w-full m-0'>
-                    <AnalyticsChart dataKey="vulnerabilities" />
-                </TabsContent>
-                <TabsContent value="critical" className='h-full w-full m-0'>
-                    <AnalyticsChart dataKey="critical" />
-                </TabsContent>
-                <TabsContent value="assets" className='h-full w-full m-0'>
-                    <AnalyticsChart dataKey="newAssets" />
-                </TabsContent>
-                <TabsContent value="risk" className='h-full w-full m-0'>
-                    <AnalyticsChart dataKey="riskScore" />
-                </TabsContent>
-              </CardContent>
-            </Tabs>
-        </Card>
-        
-        <Card className="lg:col-span-5 h-full">
-            <CardHeader className='p-3'>
-                <CardTitle className='text-sm font-semibold'>Comparative Risk Signals</CardTitle>
-            </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4 p-3 pt-0">
-                <div className='flex flex-col gap-2'>
-                    <p className='text-xs text-muted-foreground font-medium'>Findings Trend</p>
-                    <div className='h-[200px] w-full'>
-                        <ChartContainer config={chartConfig} className="w-full h-full">
-                            <BarChart data={findingsTrendData} accessibilityLayer margin={{left: -20, right: 10, top: 10}}>
-                                <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsl(var(--border) / 0.5)" />
-                                <XAxis dataKey="period" tickLine={false} axisLine={false} tickMargin={8} tick={{fontSize: 10, fill: 'hsl(var(--muted-foreground))'}} />
-                                <YAxis tickLine={false} axisLine={false} tickMargin={8} width={30} tick={{fontSize: 10, fill: 'hsl(var(--muted-foreground))'}} />
-                                <Tooltip cursor={{fill: 'hsl(var(--accent))'}} content={<ChartTooltipContent />} />
-                                <Legend content={<ChartLegendContent className='text-xs'/>} />
-                                <Bar dataKey="critical" stackId="a" fill="var(--color-critical)" radius={[4, 4, 0, 0]} />
-                                <Bar dataKey="high" stackId="a" fill="var(--color-high)" radius={[0, 0, 0, 0]} />
-                            </BarChart>
-                        </ChartContainer>
-                    </div>
-                </div>
-                 <div className='flex flex-col gap-2'>
-                    <p className='text-xs text-muted-foreground font-medium'>Asset Risk Distribution</p>
-                    <div className='h-[200px] w-full flex items-center justify-center'>
-                        <ChartContainer config={chartConfig} className="w-full h-full">
-                            <PieChart>
-                                <Tooltip content={<ChartTooltipContent nameKey="assets" hideLabel />} />
-                                <Pie data={assetRiskData} dataKey="assets" nameKey='risk' innerRadius={50} outerRadius={70} paddingAngle={2}>
-                                     <Legend content={<ChartLegendContent className='text-xs' />} />
-                                </Pie>
-                            </PieChart>
-                        </ChartContainer>
-                    </div>
-                </div>
-                <div className='flex flex-col gap-2'>
-                    <p className='text-xs text-muted-foreground font-medium'>Open Vulnerability Age</p>
-                    <div className='h-[200px] w-full'>
-                         <ChartContainer config={chartConfig} className="w-full h-full">
-                            <BarChart data={vulnerabilityAgeData} accessibilityLayer margin={{left: -20, right: 10, top: 10}}>
-                                 <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsl(var(--border) / 0.5)" />
-                                <XAxis dataKey="age" tickLine={false} axisLine={false} tickMargin={8} tick={{fontSize: 10, fill: 'hsl(var(--muted-foreground))'}} />
-                                <YAxis tickLine={false} axisLine={false} tickMargin={8} width={30} tick={{fontSize: 10, fill: 'hsl(var(--muted-foreground))'}} />
-                                <Tooltip cursor={{fill: 'hsl(var(--accent))'}} content={<ChartTooltipContent />} />
-                                <Bar dataKey="count" fill="var(--color-medium)" radius={[4, 4, 0, 0]} />
-                            </BarChart>
-                        </ChartContainer>
-                    </div>
-                </div>
-            </CardContent>
-       </Card>
-      </div>
-      
-      <Card>
-        <CardHeader className='p-3'>
-            <CardTitle className='text-sm font-semibold'>Latest Scans</CardTitle>
-        </CardHeader>
-        <CardContent className='p-3 pt-0'>
-            <div className="overflow-hidden border border-border rounded-lg">
-            <table className="w-full text-sm">
-                <thead className="bg-white/5">
-                <tr className='border-b-0'>
-                    <th className="px-4 py-2 text-left text-xs font-semibold text-muted-foreground">Tool</th>
-                    <th className="px-4 py-2 text-left text-xs font-semibold text-muted-foreground">Target</th>
-                    <th className="px-4 py-2 text-left text-xs font-semibold text-muted-foreground">Workspace</th>
-                    <th className="px-4 py-2 text-left text-xs font-semibold text-muted-foreground">Start date</th>
-                    <th className="px-4 py-2 text-left text-xs font-semibold text-muted-foreground">Status</th>
-                    <th className="px-4 py-2 text-right text-xs font-semibold text-muted-foreground">View</th>
-                </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                <tr className="transition-colors text-xs">
-                    <td className="px-4 py-2 whitespace-nowrap text-secondary-foreground">
-                    Website Scanner
-                    </td>
-                    <td className="px-4 py-2 text-foreground/80">
-                    https://www.gohighlevel.com/78486a1
-                    </td>
-                    <td className="px-4 py-2 text-foreground/80">My Workspace</td>
-                    <td className="px-4 py-2 text-foreground/80">
-                    Oct 30, 2025 – 20:20
-                    </td>
-                    <td className="px-4 py-2">
-                    <span className="inline-flex items-center gap-2 rounded-full px-2 py-0.5 text-xs font-medium text-success-foreground bg-success/10 border border-success/20">
-                        <span className="h-1.5 w-1.5 rounded-full bg-success" />
-                        Completed
-                    </span>
-                    </td>
-                    <td className="px-4 py-2 text-right">
-                    <Button variant='link' className='p-0 h-auto text-primary text-xs'>View status</Button>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+      {/* 2. MAIN VISUALIZATION ROW */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {/* A. Advanced Trend Analysis (Interactive) */}
+        <GlassCard
+          title="Scan Velocity (7 Days)"
+          className="lg:col-span-2"
+          action={
+            <div className="flex items-center gap-1 bg-white/5 p-0.5 rounded-lg border border-white/5">
+              <Button
+                variant="ghost"
+                size="icon"
+                className={cn(
+                  "h-6 w-6 rounded-md",
+                  chartView === "area" && "bg-white/10 text-white"
+                )}
+                onClick={() => setChartView("area")}
+                title="Area View"
+              >
+                <LayoutTemplate className="h-3.5 w-3.5" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className={cn(
+                  "h-6 w-6 rounded-md",
+                  chartView === "bar" && "bg-white/10 text-white"
+                )}
+                onClick={() => setChartView("bar")}
+                title="Bar View"
+              >
+                <BarChart3 className="h-3.5 w-3.5" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className={cn(
+                  "h-6 w-6 rounded-md",
+                  chartView === "composed" && "bg-white/10 text-white"
+                )}
+                onClick={() => setChartView("composed")}
+                title="Composed View"
+              >
+                <LineChart className="h-3.5 w-3.5" />
+              </Button>
             </div>
-        </CardContent>
-      </Card>
+          }
+        >
+          <div className="h-[280px] w-full">
+            {data.charts.exposureTrend.length > 0 ? (
+              <ChartContainer config={trendConfig} className="h-full w-full">
+                {chartView === "area" ? (
+                  <AreaChart
+                    data={data.charts.exposureTrend}
+                    margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+                  >
+                    <defs>
+                      <linearGradient
+                        id="fillScans"
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1"
+                      >
+                        <stop
+                          offset="5%"
+                          stopColor="#8b5cf6"
+                          stopOpacity={0.4}
+                        />
+                        <stop
+                          offset="95%"
+                          stopColor="#8b5cf6"
+                          stopOpacity={0}
+                        />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid
+                      vertical={false}
+                      strokeDasharray="3 3"
+                      stroke="rgba(255,255,255,0.05)"
+                    />
+                    <XAxis
+                      dataKey="date"
+                      tickLine={false}
+                      axisLine={false}
+                      tickMargin={10}
+                      tick={{ fontSize: 10, fill: "#94a3b8" }}
+                    />
+                    <YAxis
+                      tickLine={false}
+                      axisLine={false}
+                      tickMargin={10}
+                      width={30}
+                      tick={{ fontSize: 10, fill: "#94a3b8" }}
+                    />
+                    <Tooltip
+                      content={
+                        <ChartTooltipContent className="bg-[#0B0C15] border-white/10" />
+                      }
+                    />
+                    <Area
+                      dataKey="scans"
+                      type="monotone"
+                      fill="url(#fillScans)"
+                      stroke="#8b5cf6"
+                      strokeWidth={2}
+                    />
+                  </AreaChart>
+                ) : chartView === "bar" ? (
+                  <BarChart
+                    data={data.charts.exposureTrend}
+                    margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+                  >
+                    <CartesianGrid
+                      vertical={false}
+                      strokeDasharray="3 3"
+                      stroke="rgba(255,255,255,0.05)"
+                    />
+                    <XAxis
+                      dataKey="date"
+                      tickLine={false}
+                      axisLine={false}
+                      tickMargin={10}
+                      tick={{ fontSize: 10, fill: "#94a3b8" }}
+                    />
+                    <YAxis
+                      tickLine={false}
+                      axisLine={false}
+                      tickMargin={10}
+                      width={30}
+                      tick={{ fontSize: 10, fill: "#94a3b8" }}
+                    />
+                    <Tooltip
+                      cursor={{ fill: "white", opacity: 0.05 }}
+                      content={
+                        <ChartTooltipContent className="bg-[#0B0C15] border-white/10" />
+                      }
+                    />
+                    <Bar
+                      dataKey="scans"
+                      fill="#8b5cf6"
+                      radius={[4, 4, 0, 0]}
+                      barSize={40}
+                    />
+                  </BarChart>
+                ) : (
+                  <ComposedChart
+                    data={data.charts.exposureTrend}
+                    margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+                  >
+                    <CartesianGrid
+                      vertical={false}
+                      strokeDasharray="3 3"
+                      stroke="rgba(255,255,255,0.05)"
+                    />
+                    <XAxis
+                      dataKey="date"
+                      tickLine={false}
+                      axisLine={false}
+                      tickMargin={10}
+                      tick={{ fontSize: 10, fill: "#94a3b8" }}
+                    />
+                    <YAxis
+                      tickLine={false}
+                      axisLine={false}
+                      tickMargin={10}
+                      width={30}
+                      tick={{ fontSize: 10, fill: "#94a3b8" }}
+                    />
+                    <Tooltip
+                      content={
+                        <ChartTooltipContent className="bg-[#0B0C15] border-white/10" />
+                      }
+                    />
+                    <Bar
+                      dataKey="scans"
+                      fill="#8b5cf6"
+                      radius={[4, 4, 0, 0]}
+                      barSize={20}
+                      opacity={0.6}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="scans"
+                      stroke="#10b981"
+                      strokeWidth={2}
+                      dot={{ r: 4, fill: "#10b981" }}
+                    />
+                  </ComposedChart>
+                )}
+              </ChartContainer>
+            ) : (
+              <EmptyState text="No scan history available" />
+            )}
+          </div>
+        </GlassCard>
+
+        {/* B. Operational Efficiency (Radial Bar) */}
+        <GlassCard title="Operational Efficiency">
+          <div className="h-[280px] w-full relative flex items-center justify-center">
+            <ChartContainer config={radialConfig} className="h-full w-full">
+              <RadialBarChart
+                innerRadius="30%"
+                outerRadius="100%"
+                barSize={15}
+                data={radialData}
+                startAngle={180}
+                endAngle={0}
+              >
+                <RadialBar
+                  label={{
+                    position: "insideStart",
+                    fill: "#fff",
+                    fontSize: "10px",
+                  }}
+                  background
+                  dataKey="count"
+                  cornerRadius={10}
+                />
+                <Legend
+                  iconSize={8}
+                  layout="vertical"
+                  verticalAlign="middle"
+                  wrapperStyle={{ right: 0, top: "40%" }}
+                />
+                <Tooltip
+                  content={
+                    <ChartTooltipContent className="bg-[#0B0C15] border-white/10" />
+                  }
+                />
+              </RadialBarChart>
+            </ChartContainer>
+
+            <div className="absolute top-[60%] left-1/2 -translate-x-1/2 text-center">
+              <p className="text-2xl font-bold text-white">
+                {data.kpi.totalScans}
+              </p>
+              <p className="text-xs text-slate-500 uppercase tracking-wider">
+                Total Ops
+              </p>
+            </div>
+          </div>
+        </GlassCard>
+      </div>
+
+      {/* 3. DATA TABLES ROW */}
+      <div className="grid grid-cols-1 gap-4">
+        <GlassCard title="Live Scan Feed" noPadding>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left">
+              <thead className="text-[10px] uppercase bg-white/5 text-slate-400 tracking-wider">
+                <tr>
+                  <th className="px-6 py-3 font-medium">Tool</th>
+                  <th className="px-6 py-3 font-medium">Target</th>
+                  <th className="px-6 py-3 font-medium">Date</th>
+                  <th className="px-6 py-3 font-medium">Status</th>
+                  <th className="px-6 py-3 font-medium text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5">
+                {data.recentScans.length > 0 ? (
+                  data.recentScans.map((scan) => (
+                    <tr
+                      key={scan.id}
+                      className="hover:bg-white/5 transition-colors group"
+                    >
+                      <td className="px-6 py-3 font-medium text-white">
+                        {scan.tool_name || "Unknown"}
+                      </td>
+                      <td className="px-6 py-3 text-slate-400 font-mono text-xs group-hover:text-violet-300 transition-colors">
+                        {scan.target}
+                      </td>
+                      <td className="px-6 py-3 text-slate-400 text-xs">
+                        {new Date(scan.created_at).toLocaleDateString()}
+                      </td>
+                      <td className="px-6 py-3">
+                        <StatusBadge status={scan.status} />
+                      </td>
+                      <td className="px-6 py-3 text-right">
+                        <Link
+                          href={`/dashboard/scans/${
+                            scan.tool_id || "unknown"
+                          }/${scan.id}`}
+                        >
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-6 px-2 text-xs text-slate-400 hover:text-white hover:bg-white/10"
+                          >
+                            Details
+                          </Button>
+                        </Link>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan={5}
+                      className="px-6 py-8 text-center text-slate-500"
+                    >
+                      No activity recorded
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </GlassCard>
+      </div>
     </div>
   );
 }
 
-function AnalyticsChart({ dataKey }: { dataKey: keyof typeof chartConfig }) {
-    const color = chartConfig[dataKey].color;
-    return (
-        <ChartContainer config={chartConfig} className="h-full w-full">
-            <AreaChart
-                accessibilityLayer
-                data={exposureTrendData}
-                margin={{ left: 0, right: 12, top: 10, bottom: 0, }}
+// --- SUB COMPONENTS ---
+
+function KpiCard({ title, metric, icon: Icon, trend, trendType, alert }: any) {
+  const trendColor =
+    trendType === "up"
+      ? "text-emerald-400"
+      : trendType === "down"
+      ? "text-red-400"
+      : "text-slate-500";
+  const IconTrend = trendType === "up" ? ArrowUp : ArrowDown;
+
+  return (
+    <Card className="bg-[#0B0C15]/50 backdrop-blur-md border border-white/10 shadow-sm p-5 relative overflow-hidden group hover:border-white/20 transition-all">
+      <div className="absolute right-4 top-4 p-2 rounded-lg bg-white/5 text-slate-400 group-hover:text-white transition-colors">
+        <Icon className="h-5 w-5" />
+      </div>
+      <div className="space-y-1">
+        <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">
+          {title}
+        </p>
+        <div className="flex items-baseline gap-2">
+          <h2
+            className={cn(
+              "text-2xl font-bold tracking-tight",
+              alert && metric !== "0" ? "text-red-400" : "text-white"
+            )}
+          >
+            {metric}
+          </h2>
+          {trend && (
+            <span
+              className={cn(
+                "flex items-center text-[10px] font-medium bg-white/5 px-1.5 py-0.5 rounded",
+                trendColor
+              )}
             >
-                <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsl(var(--border) / 0.5)" />
-                <XAxis
-                    dataKey="date"
-                    tickLine={false}
-                    axisLine={false}
-                    tickMargin={8}
-                    tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                    tick={{fontSize: 10, fill: 'hsl(var(--muted-foreground))'}}
-                />
-                <YAxis tickLine={false} axisLine={false} tickMargin={8} width={30} tick={{fontSize: 10, fill: 'hsl(var(--muted-foreground))'}} />
-                <Tooltip
-                    cursor={{ stroke: 'hsl(var(--border))', strokeWidth: 1 }}
-                    content={<ChartTooltipContent indicator="dot" />}
-                />
-                <Area
-                    dataKey={dataKey}
-                    type="natural"
-                    fill={color}
-                    fillOpacity={0.1}
-                    stroke={color}
-                    strokeWidth={2}
-                />
-            </AreaChart>
-        </ChartContainer>
-    )
-}
-
-type KpiCardProps = {
-    title: string;
-    metric: string;
-    delta: string;
-    deltaType: 'increase' | 'decrease' | 'neutral';
-    invertDeltaColor?: boolean;
-}
-
-function KpiCard({ title, metric, delta, deltaType, invertDeltaColor = false }: KpiCardProps) {
-    const isIncrease = deltaType === 'increase';
-    
-    let colorClass = 'text-muted-foreground';
-    if (deltaType !== 'neutral') {
-        if (invertDeltaColor) {
-            colorClass = isIncrease ? 'text-destructive' : 'text-success';
-        } else {
-            colorClass = isIncrease ? 'text-destructive' : 'text-success';
-        }
-    }
-
-    const DeltaIcon = isIncrease ? ArrowUp : ArrowDown;
-
-    return (
-        <div className='flex flex-col justify-between p-3 rounded-lg bg-card/50 border'>
-            <div className="flex items-center justify-between pb-1">
-                <span className="text-xs font-medium text-muted-foreground whitespace-nowrap">{title}</span>
-                 {deltaType !== "neutral" && (
-                    <div className={cn("flex items-center gap-1 text-xs", colorClass)}>
-                        <DeltaIcon className="h-3 w-3" />
-                        <span>{delta.replace(/[+-]/g, '')}</span>
-                    </div>
-                )}
-            </div>
-            <div className="text-2xl font-bold">{metric}</div>
+              {trendType !== "neutral" && (
+                <IconTrend className="h-2.5 w-2.5 mr-0.5" />
+              )}
+              {trend}
+            </span>
+          )}
         </div>
-    );
+      </div>
+    </Card>
+  );
 }
 
-type StatusIndicatorProps = {
-    label: string;
-    value: string;
-    status: 'ok' | 'warning' | 'danger';
-    Icon?: React.ElementType;
-};
-
-function StatusIndicator({ label, value, status, Icon }: StatusIndicatorProps) {
-    const statusColor = {
-        ok: 'bg-success',
-        warning: 'bg-warning',
-        danger: 'bg-destructive',
-    };
-
-    return (
-        <div className="flex flex-col gap-1 p-2 rounded-lg bg-card border">
-            <p className="text-xs font-medium text-muted-foreground">{label}</p>
-            <div className="flex items-center gap-2">
-                <span className={cn('h-2 w-2 rounded-full', statusColor[status])} />
-                {Icon && <Icon className="h-4 w-4 text-muted-foreground" />}
-                <span className="text-base font-semibold">{value}</span>
-            </div>
-        </div>
-    );
+function GlassCard({
+  children,
+  title,
+  className,
+  noPadding = false,
+  action,
+}: {
+  children: React.ReactNode;
+  title?: string;
+  className?: string;
+  noPadding?: boolean;
+  action?: React.ReactNode;
+}) {
+  return (
+    <Card
+      className={cn(
+        "bg-[#0B0C15]/50 backdrop-blur-md border border-white/10 shadow-sm rounded-xl overflow-hidden flex flex-col h-full",
+        className
+      )}
+    >
+      {title && (
+        <CardHeader className="px-5 py-3 border-b border-white/5 flex flex-row items-center justify-between">
+          <CardTitle className="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+            {title}
+          </CardTitle>
+          {action && <div>{action}</div>}
+        </CardHeader>
+      )}
+      <CardContent className={cn("flex-1", noPadding ? "p-0" : "p-5")}>
+        {children}
+      </CardContent>
+    </Card>
+  );
 }
 
-    
+function EmptyState({ text }: { text: string }) {
+  return (
+    <div className="h-full w-full flex flex-col items-center justify-center text-slate-500 space-y-2">
+      <Activity className="h-8 w-8 opacity-20" />
+      <span className="text-xs font-medium">{text}</span>
+    </div>
+  );
+}
+
+function StatusBadge({ status }: { status: string }) {
+  const styles: any = {
+    completed: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
+    running: "text-blue-400 bg-blue-500/10 border-blue-500/20",
+    failed: "text-red-400 bg-red-500/10 border-red-500/20",
+    queued: "text-yellow-400 bg-yellow-500/10 border-yellow-500/20",
+  };
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center px-2 py-0.5 text-[10px] font-medium border rounded-full capitalize",
+        styles[status] || styles.queued
+      )}
+    >
+      {status === "running" && (
+        <span className="mr-1.5 h-1 w-1 rounded-full bg-current animate-pulse" />
+      )}
+      {status}
+    </span>
+  );
+}
+
+function DashboardSkeleton() {
+  return (
+    <div className="flex-1 space-y-4 p-2 animate-pulse">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        {[1, 2, 3, 4].map((i) => (
+          <div
+            key={i}
+            className="h-28 bg-white/5 rounded-xl border border-white/5"
+          />
+        ))}
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="col-span-2 h-[300px] bg-white/5 rounded-xl border border-white/5" />
+        <div className="h-[300px] bg-white/5 rounded-xl border border-white/5" />
+      </div>
+      <div className="grid grid-cols-1 gap-4">
+        <div className="h-[300px] bg-white/5 rounded-xl border border-white/5" />
+      </div>
+    </div>
+  );
+}

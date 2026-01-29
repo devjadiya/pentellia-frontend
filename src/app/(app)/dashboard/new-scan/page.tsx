@@ -1,0 +1,260 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Search, ArrowRight, Sparkles, Star } from "lucide-react"; // Added Star/Sparkles
+import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { getIcon } from "@/lib/icon-map";
+import toast from "react-hot-toast";
+
+// --- Types ---
+interface SecurityTool {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  slug: string;
+}
+
+// Define the tools we want to pin to the top
+const PINNED_TOOLS = ["webscan", "cloudscan", "networkscan"];
+
+export default function NewScanPage() {
+  const router = useRouter();
+  const [tools, setTools] = useState<SecurityTool[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+
+  // --- Fetch Tools ---
+  useEffect(() => {
+    const fetchTools = async () => {
+      try {
+        const res = await fetch("/api/tools");
+        const data = await res.json();
+        if (data.success) {
+          setTools(data.tools);
+        } else {
+          toast.error("Failed to load tools");
+        }
+      } catch (error) {
+        console.error("Error fetching tools:", error);
+        toast.error("Network error loading tools");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTools();
+  }, []);
+
+  // --- Filtering & Sorting Logic ---
+  const filteredTools = tools
+    .filter((tool) => {
+      const matchesSearch =
+        tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        tool.description.toLowerCase().includes(searchQuery.toLowerCase());
+
+      const matchesCategory = selectedCategory
+        ? tool.category === selectedCategory
+        : true;
+
+      return matchesSearch && matchesCategory;
+    })
+    .sort((a, b) => {
+      // Check if tools are pinned (check both slug and id for robustness)
+      const aPinned =
+        PINNED_TOOLS.includes(a.slug) || PINNED_TOOLS.includes(a.id);
+      const bPinned =
+        PINNED_TOOLS.includes(b.slug) || PINNED_TOOLS.includes(b.id);
+
+      // Pinned tools go first
+      if (aPinned && !bPinned) return -1;
+      if (!aPinned && bPinned) return 1;
+      return 0; // Maintain original order otherwise
+    });
+
+  const categories = Array.from(new Set(tools.map((t) => t.category)));
+
+  const handleToolClick = (slug: string) => {
+    router.push(`/dashboard/new-scan/${slug}`);
+  };
+
+  return (
+    <div className="flex flex-col h-[calc(100vh-6rem)] space-y-6 font-sans text-slate-200">
+      {/* --- Header --- */}
+      <div className="flex-none space-y-4">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-2xl font-bold tracking-tight text-white">
+            New Scan
+          </h1>
+          <p className="text-sm text-slate-400">
+            Select a tool to configure and launch a new security assessment.
+          </p>
+        </div>
+
+        {/* Filters */}
+        <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
+          <div className="relative w-full md:max-w-md">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+            <Input
+              placeholder="Find a scanner..."
+              className="pl-9 bg-[#0B0C15]/50 border-white/10 text-white placeholder:text-slate-500 focus-visible:ring-violet-500"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+
+          {!isLoading && (
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => setSelectedCategory(null)}
+                className={cn(
+                  "px-3 py-1.5 rounded-full text-xs font-medium transition-all border",
+                  selectedCategory === null
+                    ? "bg-violet-600/20 text-violet-300 border-violet-500/50"
+                    : "bg-white/5 text-slate-400 border-transparent hover:bg-white/10 hover:text-white"
+                )}
+              >
+                All
+              </button>
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() =>
+                    setSelectedCategory(cat === selectedCategory ? null : cat)
+                  }
+                  className={cn(
+                    "px-3 py-1.5 rounded-full text-xs font-medium transition-all border",
+                    selectedCategory === cat
+                      ? "bg-violet-600/20 text-violet-300 border-violet-500/50"
+                      : "bg-white/5 text-slate-400 border-transparent hover:bg-white/10 hover:text-white"
+                  )}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* --- Tools Grid --- */}
+      <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pb-10">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <ToolSkeleton key={i} />
+            ))}
+          </div>
+        ) : filteredTools.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pb-10">
+            {filteredTools.map((tool) => {
+              const Icon = getIcon(tool.id);
+              const isPinned =
+                PINNED_TOOLS.includes(tool.slug) ||
+                PINNED_TOOLS.includes(tool.id);
+
+              return (
+                <div
+                  key={tool.id}
+                  onClick={() => handleToolClick(tool.slug)}
+                  className={cn(
+                    "group relative flex flex-col p-5 rounded-xl border backdrop-blur-sm transition-all duration-300 cursor-pointer overflow-hidden",
+                    // Conditional Styling for Pinned items
+                    isPinned
+                      ? "bg-violet-500/[0.08] border-violet-500/40 hover:bg-violet-500/[0.12] hover:border-violet-400/60 shadow-[0_0_20px_rgba(139,92,246,0.1)]"
+                      : "bg-[#0B0C15]/40 border-white/10 hover:bg-white/[0.07] hover:border-violet-500/30"
+                  )}
+                >
+                  {/* Decorative Glow for Pinned Items */}
+                  {isPinned && (
+                    <div className="absolute top-0 right-0 p-16 bg-violet-500/20 blur-3xl rounded-full -mr-10 -mt-10 pointer-events-none transition-opacity group-hover:opacity-100" />
+                  )}
+
+                  <div className="flex items-start justify-between mb-4 relative z-10">
+                    <div
+                      className={cn(
+                        "flex h-12 w-12 items-center justify-center rounded-lg border transition-colors",
+                        isPinned
+                          ? "bg-violet-500/20 border-violet-500/30 text-violet-200"
+                          : "bg-white/5 border-white/5 text-slate-300 group-hover:border-violet-500/20 group-hover:bg-violet-500/10 group-hover:text-violet-300"
+                      )}
+                    >
+                      <Icon className="h-6 w-6" />
+                    </div>
+
+                    {isPinned ? (
+                      <Badge className="bg-violet-500 text-white border-0 text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 shadow-sm flex items-center gap-1">
+                        <Star className="h-3 w-3 fill-current" /> Recommended
+                      </Badge>
+                    ) : (
+                      <Badge
+                        variant="outline"
+                        className="bg-transparent border-white/10 text-slate-500 text-[10px] uppercase tracking-wider group-hover:border-violet-500/20 group-hover:text-violet-400"
+                      >
+                        {tool.category}
+                      </Badge>
+                    )}
+                  </div>
+
+                  <div className="relative z-10 flex-1">
+                    <h3
+                      className={cn(
+                        "font-semibold text-lg mb-1 transition-colors flex items-center gap-2",
+                        isPinned
+                          ? "text-white group-hover:text-violet-100"
+                          : "text-white group-hover:text-violet-200"
+                      )}
+                    >
+                      {tool.name}
+                    </h3>
+                    <p className="text-sm text-slate-400 line-clamp-2 leading-relaxed">
+                      {tool.description}
+                    </p>
+                  </div>
+
+                  <div
+                    className={cn(
+                      "relative z-10 mt-4 flex items-center text-xs font-medium transition-colors",
+                      isPinned
+                        ? "text-violet-300 group-hover:text-violet-200"
+                        : "text-slate-500 group-hover:text-violet-400"
+                    )}
+                  >
+                    <span>Configure Scan</span>
+                    <ArrowRight className="ml-2 h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center h-[50vh] text-slate-500">
+            <Search className="h-12 w-12 mb-4 opacity-20" />
+            <p className="text-lg font-medium">No tools found</p>
+            <p className="text-sm">Try adjusting your search terms</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// --- Skeleton Component ---
+function ToolSkeleton() {
+  return (
+    <div className="p-5 rounded-xl border border-white/10 bg-[#0B0C15]/40 animate-pulse">
+      <div className="flex justify-between mb-4">
+        <div className="h-12 w-12 bg-white/5 rounded-lg"></div>
+        <div className="h-5 w-16 bg-white/5 rounded-full"></div>
+      </div>
+      <div className="h-6 w-3/4 bg-white/5 rounded mb-2"></div>
+      <div className="h-4 w-full bg-white/5 rounded mb-1"></div>
+      <div className="h-4 w-2/3 bg-white/5 rounded"></div>
+      <div className="mt-4 h-4 w-1/3 bg-white/5 rounded"></div>
+    </div>
+  );
+}

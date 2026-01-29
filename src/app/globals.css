@@ -1,88 +1,86 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 225 33% 6%; /* #0B0F1A */
-    --foreground: 223 27% 93%; /* #E6EAF2 */
-    
-    --card: 225 31% 10%; /* #12182A */
-    --card-foreground: 223 27% 93%;
-    
-    --popover: 225 33% 6%;
-    --popover-foreground: 223 27% 93%;
-    
-    --primary: 236 100% 74%; /* #6E7AFF - muted purple-blue */
+    /* Deep "Cyber" Dark Mode Colors */
+    --background: 240 10% 4%; /* #09090b */
+    --foreground: 0 0% 98%;
+    --card: 240 10% 6%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 4%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 263.4 70% 50.4%; /* Violet-600 */
     --primary-foreground: 210 40% 98%;
-
-    --secondary: 220 28% 52%; /* #6D7B9C - muted slate blue */
-    --secondary-foreground: 223 27% 93%;
-    
-    --muted: 225 20% 25%; /* #33394D */
-    --muted-foreground: 222 18% 64%; /* #9AA4BF */
-    
-    --accent: 225 20% 25%;
-    --accent-foreground: 223 27% 93%;
-    
-    --destructive: 0 63% 50%; /* Desaturated Red */
+    --secondary: 240 4% 16%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 240 4% 16%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 263 70% 50% / 0.15;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    
-    --warning: 38 82% 55%; /* Desaturated Amber */
-    
-    --success: 142 61% 45%; /* Desaturated Green */
-    --success-foreground: 142 90% 95%;
-
-    --border: 228 35% 18%; /* #1E2540 */
-    --input: 228 35% 18%;
-    
-    --ring: 236 100% 74%;
-    --radius: 6px;
-
-    --color-critical: hsl(var(--destructive));
-    --color-high: hsl(var(--warning));
-    --color-medium: hsl(var(--chart-3));
-    --color-low: hsl(var(--muted-foreground));
-
-    --chart-1: hsl(236 80% 70%);
-    --chart-2: hsl(220 80% 70%);
-    --chart-3: hsl(210 80% 70%);
-    --chart-4: hsl(190 80% 70%);
-  }
-
-  .dark {
-    --background: 225 33% 6%;
-    --foreground: 223 27% 93%;
-    --card: 225 31% 10%;
-    --card-foreground: 223 27% 93%;
-    --popover: 225 33% 6%;
-    --popover-foreground: 223 27% 93%;
-    --primary: 236 100% 74%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 220 28% 52%;
-    --secondary-foreground: 223 27% 93%;
-    --muted: 225 20% 25%;
-    --muted-foreground: 222 18% 64%;
-    --accent: 225 20% 25%;
-    --accent-foreground: 223 27% 93%;
-    --destructive: 0 63% 50%;
-    --destructive-foreground: 0 0% 98%;
-    --warning: 38 82% 55%;
-    --success: 142 61% 45%;
-    --success-foreground: 142 90% 95%;
-    --border: 228 35% 18%;
-    --input: 228 35% 18%;
-    --ring: 236 100% 74%;
-    --radius: 6px;
+    --border: 240 4% 16%;
+    --input: 240 4% 16%;
+    --ring: 263.4 70% 50.4%;
   }
 }
 
-@layer base {
+/* Force dark background on the body */
+body {
+  @apply bg-[#05050A] text-slate-200 selection:bg-violet-500/30;
+}
+
+@layer utilities {
+  /* --- Chrome, Edge, Safari --- */
+  ::-webkit-scrollbar {
+    width: 8px; /* Width of the vertical scrollbar */
+    height: 8px; /* Height of the horizontal scrollbar */
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent; /* Matches the dark background seamlessly */
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.1); /* Subtle white overlay */
+    border-radius: 9999px; /* Fully rounded pills */
+    border: 2px solid transparent; /* Creates padding effect around the thumb */
+    background-clip: content-box;
+    transition: background-color 0.2s ease;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.2); /* Lighter on hover */
+  }
+
+  /* --- Firefox --- */
   * {
-    @apply border-border;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
   }
-  body {
-    @apply bg-background text-foreground;
+}
+
+/* Optional: Custom utility class for specific containers you want to hide scrollbars on but keep functionality */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* In your globals.css file */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
   }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 30s linear infinite;
 }

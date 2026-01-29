@@ -1,30 +1,14 @@
-import { Timestamp } from 'firebase-admin/firestore'
-import { z } from 'zod'
-
-export const CreateUserSchema = z.object({
-    uid: z.string().min(1),
-    firstName: z.string().min(2),
-    lastName: z.string().min(2),
-    email: z.string().email(),
-})
-
-export const UpdateUserSchema = z.object({
-    firstName: z.string().min(2).optional(),
-    lastName: z.string().min(2).optional(),
-})
-
-
-// Infer TypeScript types from Zod schemas
-export type CreateUserInput = z.infer<typeof CreateUserSchema>
-export type UpdateUserInput = z.infer<typeof UpdateUserSchema>
-
-// Domain model (database entity)
-export interface User {
-    id: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    wallet:number;
-    createdAt: Timestamp;
-    updatedAt: Timestamp;
+// src/models/user.model.ts
+export interface CreateUserInput {
+  uid: string;
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  avatar?: string; // base64 string
+  company?: string;
+  size?: string;
+  role?: string;
+  country?: string;
+  timezone?: string;
+  verifiedDomain?: string;
 }
